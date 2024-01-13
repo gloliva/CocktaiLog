@@ -3,7 +3,7 @@ Author: Gregg Oliva
 """
 
 # 3rd-part imports
-from sqlalchemy import Column, String, Float, Integer
+from sqlalchemy import Column, ForeignKey, Float, Integer, PrimaryKeyConstraint, String
 from sqlalchemy.orm import declarative_base
 
 
@@ -11,41 +11,38 @@ from sqlalchemy.orm import declarative_base
 Base = declarative_base()
 
 
-# Ingredients
-class AlcoholModel(Base):
-    __tablename__ = "alcohols"
+# Define tables
+class Ingredients(Base):
+    __tablename__ = "ingredients"
 
-    id = Column(Integer, primary_key=True)
-    category = Column(String)
-    type = Column(String)
+    id = Column(String, primary_key=True)
+    category = Column(String, nullable=False)
+    type = Column(String, nullable=False)
     style = Column(String)
     brand = Column(String)
     notes = Column(String)
 
 
-class IngredientModel(Base):
-    __tablename__ = "ingredients"
-
-    id = Column(Integer, primary_key=True)
-    category = Column(String)
-    type = Column(String)
-    notes = Column(String)
-
-
-# Recipes
-class RecipeModel(Base):
+class Recipes(Base):
     __tablename__ = "recipes"
 
-    id = Column(Integer, primary_key=True)
-    name = Column(String)
-    version = Column(Integer)
+    name = Column(String, nullable=False)
+    version = Column(Integer, nullable=False)
+
+    __table_args__ = (
+        PrimaryKeyConstraint("name", "version")
+    )
 
 
-class RecipeItemModel(Base):
+class RecipeItems(Base):
     __tablename__ = "recipe_items"
 
-    id = Column(Integer, primary_key=True)
-    recipe_id = Column(Integer)
-    ingredient_id = Column(Integer)
-    amount = Column(Float)
-    unit = Column(String)
+    recipe_name = Column(String, ForeignKey("recipes.name"), nullable=False)
+    recipe_version = Column(Integer,  ForeignKey("recipes.version"), nullable=False)
+    ingredient_id = Column(Integer, ForeignKey("ingredients.id"), nullable=False)
+    amount = Column(Float, nullable=False)
+    unit = Column(String, nullable=False)
+
+    __table_args__ = (
+        PrimaryKeyConstraint("recipe_name", "recipe_version", "ingredient_id")
+    )

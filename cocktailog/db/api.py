@@ -35,3 +35,7 @@ class Database:
     def insert(self, entry: DeclarativeBase) -> None:
         self.session.add(entry)
         self.session.commit()
+
+
+# Database instance
+db = Database()
