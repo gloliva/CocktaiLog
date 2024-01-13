@@ -4,7 +4,7 @@ Author: Gregg Oliva
 
 # 3rd-part imports
 from sqlalchemy import Column, String, Float, Integer, MetaData, Table
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import declarative_base
 
 
 # Base class for models
@@ -30,3 +30,22 @@ class IngredientModel(Base):
     category = Column(String)
     type = Column(String)
     notes = Column(String)
+
+
+# Recipes
+class RecipeModel(Base):
+    __tablename__ = "recipes"
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String)
+    version = Column(Integer)
+
+
+class RecipeItemModel(Base):
+    __tablename__ = "recipe_items"
+
+    id = Column(Integer, primary_key=True)
+    recipe_id = Column(Integer)
+    ingredient_id = Column(Integer)
+    amount = Column(Float)
+    unit = Column(String)
