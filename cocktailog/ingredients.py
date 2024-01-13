@@ -1,11 +1,12 @@
 """
 Author: Gregg Oliva
 """
-
+# stdlib imports
 from enum import Enum
+from uuid import uuid4
 
 
-class Ingredients(Enum):
+class IngredientType(Enum):
     SPIRIT = "spirit"
     LIQUEUR = "liqueur"
     WINE = "wine"
@@ -20,6 +21,7 @@ class Ingredients(Enum):
 class Ingredient:
     def __init__(self, type: str, notes: str = None) -> None:
         self.category = None
+        self.id = str(uuid4())
         self.type = type
         self.notes = notes
 
@@ -34,52 +36,52 @@ class Alcohol(Ingredient):
 class Spirit(Alcohol):
     def __init__(self, type: str, style: str = None, brand: str = None, notes: str = None) -> None:
         super().__init__(type=type, style=style, brand=brand, notes=notes)
-        self.category = Ingredients.SPIRIT
+        self.category = IngredientType.SPIRIT
 
 
 class Liqueur(Alcohol):
     def __init__(self, type: str, style: str = None, brand: str = None, notes: str = None) -> None:
         super().__init__(type=type, style=style, brand=brand, notes=notes)
-        self.category = Ingredients.LIQUEUR
+        self.category = IngredientType.LIQUEUR
 
 
 class Wine(Alcohol):
     def __init__(self, type: str, style: str = None, brand: str = None, notes: str = None) -> None:
         super().__init__(type=type, style=style, brand=brand, notes=notes)
-        self.category = Ingredients.WINE
+        self.category = IngredientType.WINE
 
 
 class Beer(Alcohol):
     def __init__(self, type: str, style: str = None, brand: str = None, notes: str = None) -> None:
         super().__init__(type=type, style=style, brand=brand, notes=notes)
-        self.category = Ingredients.BEER
+        self.category = IngredientType.BEER
 
 
 class Bitters(Alcohol):
     def __init__(self, type: str, style: str = None, brand: str = None, notes: str = None) -> None:
         super().__init__(type=type, style=style, brand=brand, notes=notes)
-        self.category = Ingredients.BITTERS
+        self.category = IngredientType.BITTERS
 
 
 class Juice(Ingredient):
     def __init__(self, type: str, notes: str = None) -> None:
         super().__init__(type=type, notes=notes)
-        self.category = Ingredients.JUICE
+        self.category = IngredientType.JUICE
 
 
 class Syrup(Ingredient):
     def __init__(self, type: str, notes: str = None) -> None:
         super().__init__(type=type, notes=notes)
-        self.category = Ingredients.SYRUP
+        self.category = IngredientType.SYRUP
 
 
 class Garnish(Ingredient):
     def __init__(self, type: str, notes: str = None) -> None:
         super().__init__(type=type, notes=notes)
-        self.category = Ingredients.GARNISH
+        self.category = IngredientType.GARNISH
 
 
 class Other(Ingredient):
     def __init__(self, type: str, notes: str = None) -> None:
         super().__init__(type=type, notes=notes)
-        self.category = Ingredients.OTHER
+        self.category = IngredientType.OTHER
