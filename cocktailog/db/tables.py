@@ -3,7 +3,7 @@ Author: Gregg Oliva
 """
 
 # 3rd-part imports
-from sqlalchemy import Column, String, Float, Integer, MetaData, Table
+from sqlalchemy import Column, String, Float, Integer
 from sqlalchemy.orm import declarative_base
 
 
