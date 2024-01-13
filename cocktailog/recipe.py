@@ -30,7 +30,9 @@ class RecipeItem:
 
 
 class Recipe:
-    def __init__(self, items: Optional[List[RecipeItem]] = None) -> None:
+    def __init__(self, name: str, version: int = 1, items: Optional[List[RecipeItem]] = None) -> None:
+        self.name = name
+        self.version = version
         self.items: List[RecipeItem] = [] if items is None else items
 
     def add_items(self, items: List[RecipeItem]) -> None:
