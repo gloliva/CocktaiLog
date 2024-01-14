@@ -6,3 +6,6 @@ __pycache__/
 
 # database
 meta/
+
+# dev files
+scratch*
