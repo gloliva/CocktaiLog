@@ -5,6 +5,10 @@ Author: Gregg Oliva
 from enum import Enum
 from uuid import uuid4
 
+# project imports
+from cocktailog.db import tables
+from cocktailog.db.api import db
+
 
 class IngredientType(Enum):
     SPIRIT = "spirit"
@@ -20,10 +24,25 @@ class IngredientType(Enum):
 
 class Ingredient:
     def __init__(self, type: str, notes: str = None) -> None:
-        self.category = None
         self.id = str(uuid4())
+        self.category = None
         self.type = type
         self.notes = notes
+
+    @property
+    def db_kwargs(self) -> None:
+        return {
+            'id': self.id,
+            'category': self.category.value,
+            'type': self.type,
+            'style': None,
+            'brand': None,
+            'notes': self.notes,
+        }
+
+    def write_to_db(self) -> None:
+        ingredient_entry = tables.Ingredients(**self.db_kwargs)
+        db.insert(ingredient_entry)
 
 
 class Alcohol(Ingredient):
@@ -31,6 +50,17 @@ class Alcohol(Ingredient):
         super().__init__(type=type, notes=notes)
         self.style = style
         self.brand = brand
+
+    @property
+    def db_kwargs(self) -> None:
+        return {
+            'id': self.id,
+            'category': self.category.value,
+            'type': self.type,
+            'style': self.style,
+            'brand': self.brand,
+            'notes': self.notes,
+        }
 
 
 class Spirit(Alcohol):

@@ -55,10 +55,9 @@ class Recipe:
                 recipe_version=self.version,
                 ingredient_id=item.ingredient.id,
                 amount=item.amount,
-                unit=item.unit,
+                unit=item.unit.value,
             )
             db.insert(recipe_item_entry)
-
 
 
 class RecipeList:

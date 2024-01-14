@@ -30,7 +30,7 @@ class Recipes(Base):
     version = Column(Integer, nullable=False)
 
     __table_args__ = (
-        PrimaryKeyConstraint("name", "version")
+        PrimaryKeyConstraint("name", "version"),
     )
 
 
@@ -44,5 +44,5 @@ class RecipeItems(Base):
     unit = Column(String, nullable=False)
 
     __table_args__ = (
-        PrimaryKeyConstraint("recipe_name", "recipe_version", "ingredient_id")
+        PrimaryKeyConstraint("recipe_name", "recipe_version", "ingredient_id"),
     )
