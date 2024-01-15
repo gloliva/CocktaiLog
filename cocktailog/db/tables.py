@@ -3,7 +3,7 @@ Author: Gregg Oliva
 """
 
 # 3rd-part imports
-from sqlalchemy import Column, ForeignKey, Float, Integer, PrimaryKeyConstraint, String
+from sqlalchemy import Column, ForeignKey, Float, Integer, Numeric, PrimaryKeyConstraint, String
 from sqlalchemy.orm import declarative_base
 
 
@@ -15,7 +15,7 @@ Base = declarative_base()
 class Ingredients(Base):
     __tablename__ = "ingredients"
 
-    id = Column(Integer, primary_key=True)
+    id = Column(String, primary_key=True)
     category = Column(String, nullable=False)
     type = Column(String, nullable=False)
     style = Column(String)
@@ -39,7 +39,7 @@ class RecipeItems(Base):
 
     recipe_name = Column(String, ForeignKey("recipes.name"), nullable=False)
     recipe_version = Column(Integer,  ForeignKey("recipes.version"), nullable=False)
-    ingredient_id = Column(Integer, ForeignKey("ingredients.id"), nullable=False)
+    ingredient_id = Column(String, ForeignKey("ingredients.id"), nullable=False)
     amount = Column(Float, nullable=False)
     unit = Column(String, nullable=False)
 

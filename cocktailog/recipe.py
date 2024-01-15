@@ -3,14 +3,15 @@ Author: Gregg Oliva
 """
 # stdlib imports
 from enum import Enum
+from hashlib import md5
 
 # project imports
 from cocktailog.db import tables
 from cocktailog.db.api import db
-from cocktailog.ingredients import Ingredient
+from cocktailog.ingredients import Ingredient, IngredientManager
 
 # mypy imports
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Union
 
 
 class Units(Enum):
@@ -32,13 +33,19 @@ class RecipeItem:
 
 
 class Recipe:
-    def __init__(self, name: str, version: int = 1, items: Optional[List[RecipeItem]] = None) -> None:
+    def __init__(self, name: str, version: int = 1) -> None:
         self.name: str = name
         self.version: int = version
-        self.items: List[RecipeItem] = [] if items is None else items
+        self.items: List[RecipeItem] = []
+        self.id = str(self.__hash__())
 
-    def add_items(self, items: List[RecipeItem]) -> None:
-        self.items.extend(items)
+    @staticmethod
+    def hash(name: str, version: int) -> None:
+        str_to_hash = name + str(version)
+        return int(md5(str_to_hash.encode('utf-8'), usedforsecurity=False).hexdigest(), 16)
+
+    def add_items(self, *items: List[RecipeItem]) -> None:
+        self.items.extend(list(items))
 
     def write_to_db(self) -> None:
         # Add recipe to the database
@@ -59,28 +66,41 @@ class Recipe:
             )
             db.insert(recipe_item_entry)
 
+    def __hash__(self) -> int:
+        str_to_hash = self.name + str(self.version)
+        return int(md5(str_to_hash.encode('utf-8'), usedforsecurity=False).hexdigest(), 16)
 
-class RecipeList:
-    def __init__(self) -> None:
-        self.recipes: Dict[str, Dict[int, Recipe]] = {}
 
-    def _get_from_db(self, name: str, version: int = 1) -> None:
-        res = (
-            db.session.query(tables.Recipes, tables.RecipeItems)
-            .filter(
-                tables.Recipes.name == name,
-                tables.Recipes.version == version,
-                tables.Recipes.name == tables.RecipeItems.recipe_name,
-                tables.Recipes.version == tables.RecipeItems.recipe_version
+class RecipeManager:
+    def __init__(self, ingredient_manager: IngredientManager) -> None:
+        self.recipes: Dict[str, Recipe] = {}
+        self.ingredient_manager = ingredient_manager
+
+    def get_by_name(self, name: str, version: int = 1) -> Recipe:
+        return self.recipes[str(Recipe.hash(name, version))]
+
+    def load_all_from_db(self) -> None:
+        recipe_rows = db.session.query(tables.Recipes)
+        for recipe_row in recipe_rows:
+            recipe = Recipe(
+                recipe_row.name,
+                recipe_row.version,
             )
-            .all()
-        )
 
-        for item in res:
-            print(item)
+            item_rows = (
+                db.session.query(tables.RecipeItems)
+                .filter(
+                    tables.RecipeItems.recipe_name == recipe.name,
+                    tables.RecipeItems.recipe_version == recipe.version,
+                )
+            )
 
-    def get(self, name: str, version: int = 1):
-        recipe = self.recipes.get(name, {})
+            for item_row in item_rows:
+                recipe_item = RecipeItem(
+                    ingredient=self.ingredient_manager.get_by_id(item_row.ingredient_id),
+                    amount=item_row.amount,
+                    unit=item_row.unit,
+                )
+                recipe.add_items(recipe_item)
 
-        if not recipe:
-            self._get_from_db(name, version)
+            self.recipes[recipe.id] = recipe

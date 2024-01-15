@@ -2,8 +2,8 @@
 Author: Gregg Oliva
 """
 # stdlib imports
-from collections import defaultdict
 from enum import Enum
+from hashlib import md5
 
 # project imports
 from cocktailog.db import tables
@@ -26,13 +26,20 @@ class IngredientType(Enum):
 
 
 class Ingredient:
-    def __init__(self, category: IngredientType, type: str, style: str = None, brand: str = None, notes: str = None) -> None:
+    def __init__(
+            self,
+            category: IngredientType,
+            type: str,
+            style: str = None,
+            brand: str = None,
+            notes: str = None
+        ) -> None:
         self.category = category
         self.type = type
         self.style = style
         self.brand = brand
         self.notes = notes
-        self.id = self.__hash__()
+        self.id = str(self.__hash__())
 
     @property
     def db_kwargs(self) -> None:
@@ -61,7 +68,7 @@ class Ingredient:
         if self.notes is not None:
             str_to_hash += self.notes
 
-        return hash(str_to_hash)
+        return int(md5(str_to_hash.encode('utf-8'), usedforsecurity=False).hexdigest(), 16)
 
     def __repr__(self) -> str:
         details = [
@@ -99,15 +106,24 @@ class IngredientManager:
     }
 
     def __init__(self) -> None:
-        self.ingredients: Dict[str, Dict[str, Ingredient]] = {
-            ingredient_type: defaultdict(set)
-            for ingredient_type in self.CATEGORY_TO_CLASS.keys()
-        }
+        # self.ingredients: Dict[str, Dict[str, Ingredient]] = {
+        #     ingredient_type: defaultdict(set)
+        #     for ingredient_type in self.CATEGORY_TO_CLASS.keys()
+        # }
+
+        self.ingredients = {}
+
+    def get_by_id(self, id: str) -> Ingredient:
+        if id not in self.ingredients:
+            pass
+
+        return self.ingredients[id]
 
     def add(self, *ingredients: List[Ingredient]) -> None:
         for ingredient in ingredients:
-            category = ingredient.category.value
-            self.ingredients[category][ingredient.type].add(ingredient)
+            # category = ingredient.category.value
+            # self.ingredients[category][ingredient.type].add(ingredient)
+            self.ingredients[ingredient.id] = ingredient
 
     def load_all_from_db(self) -> None:
         rows = db.session.query(tables.Ingredients)
