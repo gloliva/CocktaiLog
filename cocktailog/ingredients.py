@@ -2,12 +2,15 @@
 Author: Gregg Oliva
 """
 # stdlib imports
+from collections import defaultdict
 from enum import Enum
-from uuid import uuid4
 
 # project imports
 from cocktailog.db import tables
 from cocktailog.db.api import db
+
+# mypy imports
+from typing import Dict, List
 
 
 class IngredientType(Enum):
@@ -23,33 +26,13 @@ class IngredientType(Enum):
 
 
 class Ingredient:
-    def __init__(self, type: str, notes: str = None) -> None:
-        self.id = str(uuid4())
-        self.category = None
+    def __init__(self, category: IngredientType, type: str, style: str = None, brand: str = None, notes: str = None) -> None:
+        self.category = category
         self.type = type
-        self.notes = notes
-
-    @property
-    def db_kwargs(self) -> None:
-        return {
-            'id': self.id,
-            'category': self.category.value,
-            'type': self.type,
-            'style': None,
-            'brand': None,
-            'notes': self.notes,
-        }
-
-    def write_to_db(self) -> None:
-        ingredient_entry = tables.Ingredients(**self.db_kwargs)
-        db.insert(ingredient_entry)
-
-
-class Alcohol(Ingredient):
-    def __init__(self, type: str, style: str = None, brand: str = None, notes: str = None) -> None:
-        super().__init__(type=type, notes=notes)
         self.style = style
         self.brand = brand
+        self.notes = notes
+        self.id = self.__hash__()
 
     @property
     def db_kwargs(self) -> None:
@@ -62,56 +45,79 @@ class Alcohol(Ingredient):
             'notes': self.notes,
         }
 
+    def write_to_db(self) -> None:
+        ingredient_entry = tables.Ingredients(**self.db_kwargs)
+        db.insert(ingredient_entry)
 
-class Spirit(Alcohol):
-    def __init__(self, type: str, style: str = None, brand: str = None, notes: str = None) -> None:
-        super().__init__(type=type, style=style, brand=brand, notes=notes)
-        self.category = IngredientType.SPIRIT
+    def __hash__(self) -> int:
+        str_to_hash = self.category.value + self.type
 
+        if self.style is not None:
+            str_to_hash += self.style
 
-class Liqueur(Alcohol):
-    def __init__(self, type: str, style: str = None, brand: str = None, notes: str = None) -> None:
-        super().__init__(type=type, style=style, brand=brand, notes=notes)
-        self.category = IngredientType.LIQUEUR
+        if self.brand is not None:
+            str_to_hash += self.brand
 
+        if self.notes is not None:
+            str_to_hash += self.notes
 
-class Wine(Alcohol):
-    def __init__(self, type: str, style: str = None, brand: str = None, notes: str = None) -> None:
-        super().__init__(type=type, style=style, brand=brand, notes=notes)
-        self.category = IngredientType.WINE
+        return hash(str_to_hash)
 
+    def __repr__(self) -> str:
+        details = [
+            f"{self.category.value.capitalize()}",
+            f"\tType: {self.type.capitalize()}",
+        ]
 
-class Beer(Alcohol):
-    def __init__(self, type: str, style: str = None, brand: str = None, notes: str = None) -> None:
-        super().__init__(type=type, style=style, brand=brand, notes=notes)
-        self.category = IngredientType.BEER
+        if self.style is not None:
+            details.append(
+                f"\tStyle: {self.style.capitalize()}",
+            )
 
+        if self.brand is not None:
+            details.append(
+                f"\tBrand: {self.brand.capitalize()}",
+            )
 
-class Bitters(Alcohol):
-    def __init__(self, type: str, style: str = None, brand: str = None, notes: str = None) -> None:
-        super().__init__(type=type, style=style, brand=brand, notes=notes)
-        self.category = IngredientType.BITTERS
+        return "\n".join(details)
 
-
-class Juice(Ingredient):
-    def __init__(self, type: str, notes: str = None) -> None:
-        super().__init__(type=type, notes=notes)
-        self.category = IngredientType.JUICE
-
-
-class Syrup(Ingredient):
-    def __init__(self, type: str, notes: str = None) -> None:
-        super().__init__(type=type, notes=notes)
-        self.category = IngredientType.SYRUP
+    def __str__(self) -> str:
+        return str(self.__repr__())
 
 
-class Garnish(Ingredient):
-    def __init__(self, type: str, notes: str = None) -> None:
-        super().__init__(type=type, notes=notes)
-        self.category = IngredientType.GARNISH
+class IngredientManager:
+    CATEGORY_TO_CLASS = {
+        IngredientType.SPIRIT.value: IngredientType.SPIRIT,
+        IngredientType.LIQUEUR.value: IngredientType.LIQUEUR,
+        IngredientType.WINE.value: IngredientType.WINE,
+        IngredientType.BEER.value: IngredientType.BEER,
+        IngredientType.BITTERS.value: IngredientType.BITTERS,
+        IngredientType.JUICE.value: IngredientType.JUICE,
+        IngredientType.SYRUP.value: IngredientType.SYRUP,
+        IngredientType.GARNISH.value: IngredientType.GARNISH,
+        IngredientType.OTHER.value: IngredientType.OTHER,
+    }
 
+    def __init__(self) -> None:
+        self.ingredients: Dict[str, Dict[str, Ingredient]] = {
+            ingredient_type: defaultdict(set)
+            for ingredient_type in self.CATEGORY_TO_CLASS.keys()
+        }
 
-class Other(Ingredient):
-    def __init__(self, type: str, notes: str = None) -> None:
-        super().__init__(type=type, notes=notes)
-        self.category = IngredientType.OTHER
+    def add(self, *ingredients: List[Ingredient]) -> None:
+        for ingredient in ingredients:
+            category = ingredient.category.value
+            self.ingredients[category][ingredient.type].add(ingredient)
+
+    def load_all_from_db(self) -> None:
+        rows = db.session.query(tables.Ingredients)
+        for row in rows:
+            ingredient = Ingredient(
+                category=self.CATEGORY_TO_CLASS[row.category],
+                type=row.type,
+                style=row.style,
+                brand=row.brand,
+                notes=row.notes,
+            )
+
+            self.add(ingredient)

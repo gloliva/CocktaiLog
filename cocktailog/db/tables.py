@@ -15,7 +15,7 @@ Base = declarative_base()
 class Ingredients(Base):
     __tablename__ = "ingredients"
 
-    id = Column(String, primary_key=True)
+    id = Column(Integer, primary_key=True)
     category = Column(String, nullable=False)
     type = Column(String, nullable=False)
     style = Column(String)
