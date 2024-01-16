@@ -23,6 +23,12 @@ class Ingredients(Base):
     notes = Column(String)
 
 
+class AvailableIngredients(Base):
+    __tablename__ = "available_ingredients"
+
+    ingredient_id = Column(String, ForeignKey("ingredients.id"), primary_key=True)
+
+
 class Recipes(Base):
     __tablename__ = "recipes"
 

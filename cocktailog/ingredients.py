@@ -124,17 +124,19 @@ class IngredientManager:
     }
 
     def __init__(self) -> None:
-        self.ingredients = {}
+        self.recipe_ingredients = {}
+        self.available_ingredients = {}
 
     def get_by_id(self, id: str) -> Ingredient:
-        if id not in self.ingredients:
-            pass
+        return self.recipe_ingredients[id]
 
-        return self.ingredients[id]
-
-    def add(self, *ingredients: List[Ingredient]) -> None:
+    def add_ingredient(self, *ingredients: List[Ingredient]) -> None:
         for ingredient in ingredients:
-            self.ingredients[ingredient.id] = ingredient
+            self.recipe_ingredients[ingredient.id] = ingredient
+
+    def add_available_ingredient(self, *ingredients: List[Ingredient]) -> None:
+        for ingredient in ingredients:
+            self.available_ingredients[ingredient.id] = ingredient
 
     def load_all_from_db(self) -> None:
         rows = db.session.query(tables.Ingredients)
@@ -146,4 +148,9 @@ class IngredientManager:
                 brand=row.brand,
                 notes=row.notes,
             )
-            self.add(ingredient)
+            self.add_ingredient(ingredient)
+
+        rows = db.session.query(tables.AvailableIngredients)
+        for row in rows:
+            ingredient = self.get_by_id(row.ingredient_id)
+            self.add_available_ingredient(ingredient)
