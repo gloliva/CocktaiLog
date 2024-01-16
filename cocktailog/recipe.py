@@ -6,9 +6,9 @@ from enum import Enum
 from hashlib import md5
 
 # project imports
-from cocktailog.db import tables
-from cocktailog.db.api import db
-from cocktailog.ingredients import Ingredient, IngredientManager
+from db import tables
+from db.api import db
+from ingredients import Ingredient, IngredientSearch, IngredientManager
 
 # mypy imports
 from typing import Dict, List, Union
@@ -47,6 +47,17 @@ class Recipe:
     def add_items(self, *items: List[RecipeItem]) -> None:
         self.items.extend(list(items))
 
+    def contains_ingredients(self, ingredients_to_search: List[IngredientSearch], strict=False) -> bool:
+        for item in self.items:
+            equals = False
+            for ingredient in ingredients_to_search:
+                equals = equals or ingredient.equals(item.ingredient)
+
+            if not equals:
+                return False
+
+        return True
+
     def write_to_db(self) -> None:
         # Add recipe to the database
         recipe_entry = tables.Recipes(
@@ -78,6 +89,19 @@ class RecipeManager:
 
     def get_by_name(self, name: str, version: int = 1) -> Recipe:
         return self.recipes[str(Recipe.hash(name, version))]
+
+    def search_by_ingredients(
+            self,
+            ingredients_to_search: List[IngredientSearch],
+            strict=False,
+        ) -> List[Recipe]:
+        makeable_recipes = []
+        for recipe in self.recipes.values():
+            if recipe.contains_ingredients(ingredients_to_search, strict):
+                makeable_recipes.append(recipe)
+
+        return makeable_recipes.sort()
+
 
     def load_all_from_db(self) -> None:
         recipe_rows = db.session.query(tables.Recipes)

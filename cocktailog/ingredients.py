@@ -6,8 +6,8 @@ from enum import Enum
 from hashlib import md5
 
 # project imports
-from cocktailog.db import tables
-from cocktailog.db.api import db
+from db import tables
+from db.api import db
 
 # mypy imports
 from typing import Dict, List
@@ -92,6 +92,24 @@ class Ingredient:
         return str(self.__repr__())
 
 
+class IngredientSearch:
+    def __init__(self, ingredient: Ingredient, include_style: bool = False, include_brand: bool = False) -> None:
+        self.ingredient: Ingredient = ingredient
+        self.include_style: bool = include_style
+        self.include_brand: bool = include_brand
+
+    def equals(self, other: Ingredient) -> bool:
+        is_identical = self.ingredient.category == other.category and self.ingredient.type == other.type
+
+        if self.include_style:
+            is_identical = is_identical and self.ingredient.style == other.style
+
+        if self.include_brand:
+            is_identical = is_identical and self.ingredient.brand == other.brand
+
+        return is_identical
+
+
 class IngredientManager:
     CATEGORY_TO_CLASS = {
         IngredientType.SPIRIT.value: IngredientType.SPIRIT,
@@ -106,11 +124,6 @@ class IngredientManager:
     }
 
     def __init__(self) -> None:
-        # self.ingredients: Dict[str, Dict[str, Ingredient]] = {
-        #     ingredient_type: defaultdict(set)
-        #     for ingredient_type in self.CATEGORY_TO_CLASS.keys()
-        # }
-
         self.ingredients = {}
 
     def get_by_id(self, id: str) -> Ingredient:
@@ -121,8 +134,6 @@ class IngredientManager:
 
     def add(self, *ingredients: List[Ingredient]) -> None:
         for ingredient in ingredients:
-            # category = ingredient.category.value
-            # self.ingredients[category][ingredient.type].add(ingredient)
             self.ingredients[ingredient.id] = ingredient
 
     def load_all_from_db(self) -> None:
@@ -135,5 +146,4 @@ class IngredientManager:
                 brand=row.brand,
                 notes=row.notes,
             )
-
             self.add(ingredient)
