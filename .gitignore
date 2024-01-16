@@ -5,7 +5,7 @@ venv/
 __pycache__/
 
 # database
-meta/
+etc/
 
 # dev files
 scratch*
