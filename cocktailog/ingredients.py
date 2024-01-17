@@ -33,7 +33,8 @@ class Ingredient:
             type: str,
             style: str = None,
             brand: str = None,
-            notes: str = None
+            notes: str = None,
+            dirty: int = 0,
         ) -> None:
         self.category = category
         self.type = type
@@ -41,6 +42,7 @@ class Ingredient:
         self.brand = brand
         self.notes = notes
         self.id = str(self.__hash__())
+        self.dirty = dirty
 
     @property
     def db_kwargs(self) -> None:
@@ -56,6 +58,7 @@ class Ingredient:
     def write_to_db(self) -> None:
         ingredient_entry = tables.Ingredients(**self.db_kwargs)
         db.insert(ingredient_entry)
+        self.dirty = 0
 
     def __hash__(self) -> int:
         str_to_hash = self.category.value + self.type

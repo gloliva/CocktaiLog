@@ -4,6 +4,7 @@ Author: Gregg Oliva
 # stdlib imports
 from enum import Enum
 from hashlib import md5
+from random import choice
 
 # project imports
 from db import tables
@@ -26,10 +27,11 @@ class Units(Enum):
 
 
 class RecipeItem:
-    def __init__(self, ingredient: Ingredient, amount: Union[float, int], unit: Units) -> None:
+    def __init__(self, ingredient: Ingredient, amount: Union[float, int], unit: Units, dirty: int = 0) -> None:
         self.ingredient: Ingredient = ingredient
         self.amount = amount
         self.unit = unit
+        self.dirty = dirty
 
     def __repr__(self) -> str:
         return f"({self.amount} {self.unit}) {self.ingredient}"
@@ -39,11 +41,12 @@ class RecipeItem:
 
 
 class Recipe:
-    def __init__(self, name: str, version: int = 1) -> None:
+    def __init__(self, name: str, version: int = 1, dirty: int = 0) -> None:
         self.name: str = name
         self.version: int = version
         self.items: List[RecipeItem] = []
         self.id = str(self.__hash__())
+        self.dirty = dirty
 
     @staticmethod
     def hash(name: str, version: int) -> None:
@@ -82,6 +85,10 @@ class Recipe:
                 unit=item.unit.value,
             )
             db.insert(recipe_item_entry)
+            item.dirty = 0
+
+        # Mark recipe as written to db
+        self.dirty = 0
 
     def __hash__(self) -> int:
         str_to_hash = self.name + str(self.version)
@@ -115,6 +122,9 @@ class RecipeManager:
 
         makeable_recipes.sort()
         return makeable_recipes
+
+    def get_random(self) -> Recipe:
+        return choice(self.recipes)
 
     def load_all_from_db(self) -> None:
         recipe_rows = db.session.query(tables.Recipes)
