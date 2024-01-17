@@ -8,6 +8,7 @@ from hashlib import md5
 # project imports
 from db import tables
 from db.api import db
+from helpers import capitalize_all
 
 # mypy imports
 from typing import Dict, List
@@ -71,22 +72,24 @@ class Ingredient:
         return int(md5(str_to_hash.encode('utf-8'), usedforsecurity=False).hexdigest(), 16)
 
     def __repr__(self) -> str:
-        details = [
-            f"{self.category.value.capitalize()}",
-            f"\tType: {self.type.capitalize()}",
-        ]
-
-        if self.style is not None:
-            details.append(
-                f"\tStyle: {self.style.capitalize()}",
-            )
+        details = []
 
         if self.brand is not None:
             details.append(
-                f"\tBrand: {self.brand.capitalize()}",
+                f"{capitalize_all(self.brand)}",
             )
 
-        return "\n".join(details)
+        if self.style is not None:
+            details.append(
+                f"{capitalize_all(self.style)}",
+            )
+
+        details.extend([
+            f"{capitalize_all(self.type)}",
+            f"{self.category.value.capitalize()}",
+        ])
+
+        return " ".join(details)
 
     def __str__(self) -> str:
         return str(self.__repr__())
@@ -108,6 +111,14 @@ class IngredientSearch:
             is_identical = is_identical and self.ingredient.brand == other.brand
 
         return is_identical
+
+    def __repr__(self) -> str:
+        style = "x" if self.include_style else " "
+        brand = "x" if self.include_brand else " "
+        return f"({self.ingredient} | Search by Style[{style}] Brand[{brand}]"
+
+    def __str__(self) -> str:
+        return str(self.__repr__())
 
 
 class IngredientManager:

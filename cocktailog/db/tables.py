@@ -3,7 +3,14 @@ Author: Gregg Oliva
 """
 
 # 3rd-part imports
-from sqlalchemy import Column, ForeignKey, Float, Integer, Numeric, PrimaryKeyConstraint, String
+from sqlalchemy import (
+    Column,
+    ForeignKey,
+    Float,
+    Integer,
+    PrimaryKeyConstraint,
+    String,
+)
 from sqlalchemy.orm import declarative_base
 
 

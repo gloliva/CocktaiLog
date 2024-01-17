@@ -31,6 +31,12 @@ class RecipeItem:
         self.amount = amount
         self.unit = unit
 
+    def __repr__(self) -> str:
+        return f"({self.amount} {self.unit}) {self.ingredient}"
+
+    def __str__(self) -> str:
+        return str(self.__repr__())
+
 
 class Recipe:
     def __init__(self, name: str, version: int = 1) -> None:
@@ -81,6 +87,13 @@ class Recipe:
         str_to_hash = self.name + str(self.version)
         return int(md5(str_to_hash.encode('utf-8'), usedforsecurity=False).hexdigest(), 16)
 
+    def __repr__(self) -> str:
+        version = f" (v{self.version})" if self.version > 1 else ""
+        return f"{self.name}{version}"
+
+    def __str__(self) -> str:
+        return str(self.__repr__())
+
 
 class RecipeManager:
     def __init__(self, ingredient_manager: IngredientManager) -> None:
@@ -100,8 +113,8 @@ class RecipeManager:
             if recipe.contains_ingredients(ingredients_to_search, strict):
                 makeable_recipes.append(recipe)
 
-        return makeable_recipes.sort()
-
+        makeable_recipes.sort()
+        return makeable_recipes
 
     def load_all_from_db(self) -> None:
         recipe_rows = db.session.query(tables.Recipes)
