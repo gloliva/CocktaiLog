@@ -10,8 +10,8 @@ from sqlalchemy.orm import Session
 from sqlalchemy.orm.decl_api import DeclarativeBase
 
 # project imports
-from db.defs import DB_DIRECTORY, SQLITE_ENGINE
 from db.tables import Base
+from defs import DB_DIRECTORY, SQLITE_ENGINE
 
 
 class Database:
