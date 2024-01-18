@@ -5,14 +5,18 @@ Author: Gregg Oliva
 import sys
 
 # project imports
-from app import app_manager
+from app import Cocktailog
 
-def main():
-    app_manager.init_app()
-    app_manager.run_app()
-    return 0
+# mypy imports
+from typing import Optional
+
+
+def main() -> Optional[int]:
+    app = Cocktailog()
+    app.run()
+    return app.return_code
 
 
 # Program entrypoint
 if __name__ == "__main__":
-    sys.exit(main())
+    sys.exit(main() or 0)
