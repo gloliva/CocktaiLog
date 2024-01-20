@@ -8,11 +8,11 @@ from random import choice
 
 # project imports
 from db import tables
-from db.api import db
+from db.api import Database
 from ingredients import Ingredient, IngredientSearch, IngredientManager
 
 # mypy imports
-from typing import Dict, List, Union
+from typing import Any, Dict, List, Union
 
 
 class Units(Enum):
@@ -27,11 +27,30 @@ class Units(Enum):
 
 
 class RecipeItem:
-    def __init__(self, ingredient: Ingredient, amount: Union[float, int], unit: Units, dirty: int = 0) -> None:
+    UNITS_TO_CLASS = {
+        Units.OZ.value: Units.OZ,
+        Units.ML.value: Units.ML,
+        Units.DROP.value: Units.DROP,
+        Units.DASH.value: Units.DASH,
+        Units.TEASPOON.value: Units.TEASPOON,
+        Units.TABLESPOON.value: Units.TABLESPOON,
+        Units.BARSPOON.value: Units.BARSPOON,
+        Units.OTHER.value: Units.OTHER,
+    }
+
+    def __init__(self, ingredient: Ingredient, amount: Union[float, int], unit: Union[Units, str], dirty: int = 0) -> None:
         self.ingredient: Ingredient = ingredient
         self.amount = amount
-        self.unit = unit
+        self.unit = unit if isinstance(unit, Units) else self.UNITS_TO_CLASS[unit]
         self.dirty = dirty
+
+    @property
+    def json_kwargs(self) -> Dict[str, Any]:
+        return {
+            "ingredient": self.ingredient.json_kwargs,
+            "amount": self.amount,
+            "unit": self.unit.value,
+        }
 
     def __repr__(self) -> str:
         return f"({self.amount} {self.unit}) {self.ingredient}"
@@ -51,7 +70,19 @@ class Recipe:
     @staticmethod
     def hash(name: str, version: int) -> None:
         str_to_hash = name + str(version)
-        return int(md5(str_to_hash.encode('utf-8'), usedforsecurity=False).hexdigest(), 16)
+        return int(md5(str_to_hash.encode("utf-8"), usedforsecurity=False).hexdigest(), 16)
+
+    @property
+    def json_kwargs(self) -> Dict[str, Any]:
+        items = [
+            item.json_kwargs for item in self.items
+        ]
+
+        return {
+            'name': self.name,
+            'version': self.version,
+            'items': items,
+        }
 
     def add_items(self, *items: List[RecipeItem]) -> None:
         self.items.extend(list(items))
@@ -67,7 +98,7 @@ class Recipe:
 
         return True
 
-    def write_to_db(self) -> None:
+    def write_to_db(self, db: Database) -> None:
         # Add recipe to the database
         recipe_entry = tables.Recipes(
             name=self.name,
@@ -84,7 +115,7 @@ class Recipe:
                 amount=item.amount,
                 unit=item.unit.value,
             )
-            db.insert(recipe_item_entry)
+            self.db.insert(recipe_item_entry)
             item.dirty = 0
 
         # Mark recipe as written to db
@@ -92,7 +123,7 @@ class Recipe:
 
     def __hash__(self) -> int:
         str_to_hash = self.name + str(self.version)
-        return int(md5(str_to_hash.encode('utf-8'), usedforsecurity=False).hexdigest(), 16)
+        return int(md5(str_to_hash.encode("utf-8"), usedforsecurity=False).hexdigest(), 16)
 
     def __repr__(self) -> str:
         version = f" (v{self.version})" if self.version > 1 else ""
@@ -103,9 +134,10 @@ class Recipe:
 
 
 class RecipeManager:
-    def __init__(self, ingredient_manager: IngredientManager) -> None:
-        self.recipes: Dict[str, Recipe] = {}
+    def __init__(self, db: Database, ingredient_manager: IngredientManager) -> None:
+        self.db = db
         self.ingredient_manager = ingredient_manager
+        self.recipes: Dict[str, Recipe] = {}
 
     def get_by_name(self, name: str, version: int = 1) -> Recipe:
         return self.recipes[str(Recipe.hash(name, version))]
@@ -127,7 +159,7 @@ class RecipeManager:
         return choice(self.recipes)
 
     def load_all_from_db(self) -> None:
-        recipe_rows = db.session.query(tables.Recipes)
+        recipe_rows = self.db.session.query(tables.Recipes)
         for recipe_row in recipe_rows:
             recipe = Recipe(
                 recipe_row.name,
@@ -135,7 +167,7 @@ class RecipeManager:
             )
 
             item_rows = (
-                db.session.query(tables.RecipeItems)
+                self.db.session.query(tables.RecipeItems)
                 .filter(
                     tables.RecipeItems.recipe_name == recipe.name,
                     tables.RecipeItems.recipe_version == recipe.version,
@@ -151,3 +183,8 @@ class RecipeManager:
                 recipe.add_items(recipe_item)
 
             self.recipes[recipe.id] = recipe
+
+    def convert_to_json(self) -> None:
+        return [
+            recipe.json_kwargs for recipe in self.recipes.values()
+        ]

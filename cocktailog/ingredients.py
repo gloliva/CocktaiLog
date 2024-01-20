@@ -7,11 +7,11 @@ from hashlib import md5
 
 # project imports
 from db import tables
-from db.api import db
+from db.api import Database
 from helpers import capitalize_all
 
 # mypy imports
-from typing import Dict, List
+from typing import Dict, List, Union
 
 
 class IngredientType(Enum):
@@ -27,16 +27,28 @@ class IngredientType(Enum):
 
 
 class Ingredient:
+    CATEGORY_TO_CLASS = {
+        IngredientType.SPIRIT.value: IngredientType.SPIRIT,
+        IngredientType.LIQUEUR.value: IngredientType.LIQUEUR,
+        IngredientType.WINE.value: IngredientType.WINE,
+        IngredientType.BEER.value: IngredientType.BEER,
+        IngredientType.BITTERS.value: IngredientType.BITTERS,
+        IngredientType.JUICE.value: IngredientType.JUICE,
+        IngredientType.SYRUP.value: IngredientType.SYRUP,
+        IngredientType.GARNISH.value: IngredientType.GARNISH,
+        IngredientType.OTHER.value: IngredientType.OTHER,
+    }
+
     def __init__(
             self,
-            category: IngredientType,
+            category: Union[IngredientType, str],
             type: str,
             style: str = None,
             brand: str = None,
             notes: str = None,
             dirty: int = 0,
         ) -> None:
-        self.category = category
+        self.category = category if isinstance(category, IngredientType) else self.CATEGORY_TO_CLASS[category]
         self.type = type
         self.style = style
         self.brand = brand
@@ -45,20 +57,31 @@ class Ingredient:
         self.dirty = dirty
 
     @property
-    def db_kwargs(self) -> None:
+    def db_kwargs(self) -> Dict[str, str]:
         return {
-            'id': self.id,
-            'category': self.category.value,
-            'type': self.type,
-            'style': self.style,
-            'brand': self.brand,
-            'notes': self.notes,
+            "id": self.id,
+            "category": self.category.value,
+            "type": self.type,
+            "style": self.style,
+            "brand": self.brand,
+            "notes": self.notes,
         }
 
-    def write_to_db(self) -> None:
+    @property
+    def json_kwargs(self) -> Dict[str, str]:
+        return {
+            "category": self.category.value,
+            "type": self.type,
+            "style": self.style,
+            "brand": self.brand,
+            "notes": self.notes,
+        }
+
+    def write_to_db(self, db: Database) -> None:
         ingredient_entry = tables.Ingredients(**self.db_kwargs)
         db.insert(ingredient_entry)
         self.dirty = 0
+
 
     def __hash__(self) -> int:
         str_to_hash = self.category.value + self.type
@@ -72,7 +95,7 @@ class Ingredient:
         if self.notes is not None:
             str_to_hash += self.notes
 
-        return int(md5(str_to_hash.encode('utf-8'), usedforsecurity=False).hexdigest(), 16)
+        return int(md5(str_to_hash.encode("utf-8"), usedforsecurity=False).hexdigest(), 16)
 
     def __repr__(self) -> str:
         details = []
@@ -125,26 +148,15 @@ class IngredientSearch:
 
 
 class IngredientManager:
-    CATEGORY_TO_CLASS = {
-        IngredientType.SPIRIT.value: IngredientType.SPIRIT,
-        IngredientType.LIQUEUR.value: IngredientType.LIQUEUR,
-        IngredientType.WINE.value: IngredientType.WINE,
-        IngredientType.BEER.value: IngredientType.BEER,
-        IngredientType.BITTERS.value: IngredientType.BITTERS,
-        IngredientType.JUICE.value: IngredientType.JUICE,
-        IngredientType.SYRUP.value: IngredientType.SYRUP,
-        IngredientType.GARNISH.value: IngredientType.GARNISH,
-        IngredientType.OTHER.value: IngredientType.OTHER,
-    }
-
-    def __init__(self) -> None:
-        self.recipe_ingredients = {}
-        self.available_ingredients = {}
+    def __init__(self, db: Database) -> None:
+        self.db = db
+        self.recipe_ingredients: Dict[str, Ingredient] = {}
+        self.available_ingredients: Dict[str, Ingredient] = {}
 
     def get_by_id(self, id: str) -> Ingredient:
         return self.recipe_ingredients[id]
 
-    def add_ingredient(self, *ingredients: List[Ingredient]) -> None:
+    def add_recipe_ingredient(self, *ingredients: List[Ingredient]) -> None:
         for ingredient in ingredients:
             self.recipe_ingredients[ingredient.id] = ingredient
 
@@ -152,19 +164,33 @@ class IngredientManager:
         for ingredient in ingredients:
             self.available_ingredients[ingredient.id] = ingredient
 
+    def convert_to_json(self) -> Dict[str, List[Dict[str, str]]]:
+        outdict = {
+            "recipe_ingredients": [],
+            "available_ingredients": [],
+        }
+
+        for ingredient in self.recipe_ingredients.values():
+            outdict["recipe_ingredients"].append(ingredient.json_kwargs)
+
+        for ingredient in self.available_ingredients:
+            outdict["available_ingredients"].append(ingredient.json_kwargs)
+
+        return outdict
+
     def load_all_from_db(self) -> None:
-        rows = db.session.query(tables.Ingredients)
+        rows = self.db.session.query(tables.Ingredients)
         for row in rows:
             ingredient = Ingredient(
-                category=self.CATEGORY_TO_CLASS[row.category],
+                category=row.category,
                 type=row.type,
                 style=row.style,
                 brand=row.brand,
                 notes=row.notes,
             )
-            self.add_ingredient(ingredient)
+            self.add_recipe_ingredient(ingredient)
 
-        rows = db.session.query(tables.AvailableIngredients)
+        rows = self.db.session.query(tables.AvailableIngredients)
         for row in rows:
             ingredient = self.get_by_id(row.ingredient_id)
             self.add_available_ingredient(ingredient)
