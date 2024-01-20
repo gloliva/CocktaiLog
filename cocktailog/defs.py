@@ -18,3 +18,6 @@ SQLITE_ENGINE = f"sqlite:///{DB_FILEPATH}"
 STYLES_DIRECTORY = os.path.join(PATH, "..", "styles")
 STYLES_FILE = "cocktailog.tcss"
 STYLES_FILEPATH = os.path.join(STYLES_DIRECTORY, STYLES_FILE)
+
+# Json Export
+JSON_EXPORT_FILENAME = 'cocktailog_recipes.json'
