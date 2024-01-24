@@ -11,10 +11,8 @@ from tkinter import filedialog
 from textual.app import App
 from textual.binding import Binding
 from textual.widgets import (
-    Input,
     Footer,
     Header,
-    Switch,
     TabbedContent,
     TabPane,
 )
@@ -23,7 +21,10 @@ from textual.widgets import (
 from db.api import Database
 from defs import JSON_EXPORT_FILENAME, STYLES_FILEPATH
 from ingredients import IngredientManager
+from widgets.base import TabIds
 from widgets.home import HomeScreen
+from widgets.ingredients import IngredientsScreen
+from widgets.recipes import RecipeScreen
 from widgets.settings import SettingsScreen
 from recipe import RecipeManager
 
@@ -58,22 +59,15 @@ class Cocktailog(App[int]):
     def compose(self) -> None:
         yield Header()
         yield Footer()
-        with TabbedContent(initial="home", id="app_tabs"):
-            with TabPane("Home", id="home"):
+        with TabbedContent(initial=TabIds.HOME, id=TabIds.TAB_MANAGER):
+            with TabPane(TabIds.HOME.capitalize(), id=TabIds.HOME):
                 yield HomeScreen()
-            with TabPane("Ingredients", id="ingredients"):
-                yield HomeScreen()
-            with TabPane("Recipes", id="recipes"):
-                yield HomeScreen()
-            with TabPane("Settings", id="settings"):
+            with TabPane(TabIds.INGREDIENTS.capitalize(), id=TabIds.INGREDIENTS):
+                yield IngredientsScreen()
+            with TabPane(TabIds.RECIPES.capitalize(), id=TabIds.RECIPES):
+                yield RecipeScreen()
+            with TabPane(TabIds.SETTINGS.capitalize(), id=TabIds.SETTINGS):
                 yield SettingsScreen()
-
-    def on_switch_changed(self, event: Switch.Changed) -> None:
-        switch_id = event.switch.id
-        switch_value = event.value
-
-        if switch_id == "dark_mode":
-            self.dark = switch_value
 
     def action_quit_app(self) -> None:
         self.exit(0, return_code=0)
