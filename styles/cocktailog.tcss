@@ -29,3 +29,8 @@ Select {
     width: 20;
     margin: 0;
 }
+
+.recipe_buttons {
+    height: auto;
+    width: 20;
+}
