@@ -12,20 +12,26 @@ class Title(Static):
     """Used for Titles"""
 
 
-class TabIds:
-    Tab = namedtuple("Tab", ["name", "id"])
+Id = namedtuple("Id", ["name", "id"])
 
-    # Tab Names
-    TAB_MANAGER = Tab("Tab Manager", "tab_manager")
-    HOME = Tab("Home", "home_tab")
-    INGREDIENTS = Tab("Ingredients", "ingredients_tab")
-    RECIPES = Tab("Recipes", "recipes_tab")
-    SETTINGS = Tab("Settings", "settings_tab")
+
+class TabIds:
+    TAB_MANAGER = Id("Tab Manager", "tab_manager")
+    HOME = Id("Home", "home_tab")
+    INGREDIENTS = Id("Ingredients", "ingredients_tab")
+    RECIPES = Id("Recipes", "recipes_tab")
+    SETTINGS = Id("Settings", "settings_tab")
 
 
 class ButtonIds:
+    # All pages
+    HOME = Id("Home", "home_button")
+
     # Home page
-    HOME = "home"
     HOME_INGREDIENTS = "home_ingredients"
     HOME_RECIPES = "home_recipes"
     HOME_SETTINGS = "home_settings"
+
+    # Recipes page
+    RECIPE_SEARCH = Id("Search Recipe(s)", "search_recipes")
+    RECIPE_ADD = Id("Add Recipe(s)", "add_recipes")

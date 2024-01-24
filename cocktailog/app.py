@@ -8,7 +8,7 @@ import tkinter as tk
 from tkinter import filedialog
 
 # 3rd-party imports
-from textual.app import App
+from textual.app import App, ComposeResult
 from textual.binding import Binding
 from textual.widgets import (
     Footer,
@@ -24,7 +24,7 @@ from ingredients import IngredientManager
 from widgets.base import TabIds
 from widgets.home import HomeScreen
 from widgets.ingredients import IngredientsScreen
-from widgets.recipes import RecipeScreen
+from widgets.recipes import RecipeMainScreen
 from widgets.settings import SettingsScreen
 from recipe import RecipeManager
 
@@ -56,7 +56,7 @@ class Cocktailog(App[int]):
         self.im.load_all_from_db()
         self.rm.load_all_from_db()
 
-    def compose(self) -> None:
+    def compose(self) -> ComposeResult:
         yield Header()
         yield Footer()
         with TabbedContent(initial=TabIds.HOME.id, id=TabIds.TAB_MANAGER.id):
@@ -65,7 +65,7 @@ class Cocktailog(App[int]):
             with TabPane(TabIds.INGREDIENTS.name, id=TabIds.INGREDIENTS.id):
                 yield IngredientsScreen()
             with TabPane(TabIds.RECIPES.name, id=TabIds.RECIPES.id):
-                yield RecipeScreen()
+                yield RecipeMainScreen()
             with TabPane(TabIds.SETTINGS.name, id=TabIds.SETTINGS.id):
                 yield SettingsScreen()
 

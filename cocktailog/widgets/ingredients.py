@@ -9,6 +9,7 @@ from textual.widgets import Button, Static
 class IngredientsScreen(Static):
     def compose(self) -> None:
         yield Vertical(
+            Button("Search Ingredient(s)"),
             Button("Add Ingredient", classes="ingredients_main_menu"),
             Button("Modify Ingredient", classes="ingredients_main_menu"),
             Button("Remove Ingredient", classes="ingredients_main_menu"),
