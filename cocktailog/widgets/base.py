@@ -1,8 +1,10 @@
 """
 Author: Gregg Oliva
 """
+# stdlib imports
+from collections import namedtuple
+
 # 3rd-party imports
-from typing import Any
 from textual.widgets import Static
 
 
@@ -11,11 +13,14 @@ class Title(Static):
 
 
 class TabIds:
-    TAB_MANAGER = "tab_manager"
-    HOME = "home_tab"
-    INGREDIENTS = "ingredients_tab"
-    RECIPES = "recipes_tab"
-    SETTINGS = "settings_tab"
+    Tab = namedtuple("Tab", ["name", "id"])
+
+    # Tab Names
+    TAB_MANAGER = Tab("Tab Manager", "tab_manager")
+    HOME = Tab("Home", "home_tab")
+    INGREDIENTS = Tab("Ingredients", "ingredients_tab")
+    RECIPES = Tab("Recipes", "recipes_tab")
+    SETTINGS = Tab("Settings", "settings_tab")
 
 
 class ButtonIds:

@@ -6,7 +6,7 @@ from textual.containers import Horizontal
 from textual.widgets import Button, Static, Rule, TabbedContent
 
 # project imports
-from widgets.base import ButtonIds, Title
+from widgets.base import ButtonIds, TabIds, Title
 
 
 class HomeScreen(Static):
@@ -15,9 +15,9 @@ class HomeScreen(Static):
         yield Title("Welcome to Cocktailog!")
         yield Rule()
         yield Horizontal(
-            Button("Ingredients", id=ButtonIds.HOME_INGREDIENTS),
-            Button("Recipes", id=ButtonIds.HOME_RECIPES),
-            Button("Settings", id=ButtonIds.HOME_SETTINGS),
+            Button(TabIds.INGREDIENTS.name, id=ButtonIds.HOME_INGREDIENTS),
+            Button(TabIds.RECIPES.name, id=ButtonIds.HOME_RECIPES),
+            Button(TabIds.SETTINGS.name, id=ButtonIds.HOME_SETTINGS),
         )
 
     def on_button_pressed(self, event: Button.Pressed):
@@ -25,8 +25,8 @@ class HomeScreen(Static):
         tabs = self.app.query_one(TabbedContent)
 
         if button_id == ButtonIds.HOME_INGREDIENTS:
-           tabs.active = "ingredients"
+           tabs.active = TabIds.INGREDIENTS.id
         elif button_id == ButtonIds.HOME_RECIPES:
-            tabs.active = "recipes"
+            tabs.active = TabIds.RECIPES.id
         elif button_id == ButtonIds.HOME_SETTINGS:
-            tabs.active = "settings"
+            tabs.active = TabIds.SETTINGS.id

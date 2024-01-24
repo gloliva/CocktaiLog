@@ -59,14 +59,14 @@ class Cocktailog(App[int]):
     def compose(self) -> None:
         yield Header()
         yield Footer()
-        with TabbedContent(initial=TabIds.HOME, id=TabIds.TAB_MANAGER):
-            with TabPane(TabIds.HOME.capitalize(), id=TabIds.HOME):
+        with TabbedContent(initial=TabIds.HOME.id, id=TabIds.TAB_MANAGER.id):
+            with TabPane(TabIds.HOME.name, id=TabIds.HOME.id):
                 yield HomeScreen()
-            with TabPane(TabIds.INGREDIENTS.capitalize(), id=TabIds.INGREDIENTS):
+            with TabPane(TabIds.INGREDIENTS.name, id=TabIds.INGREDIENTS.id):
                 yield IngredientsScreen()
-            with TabPane(TabIds.RECIPES.capitalize(), id=TabIds.RECIPES):
+            with TabPane(TabIds.RECIPES.name, id=TabIds.RECIPES.id):
                 yield RecipeScreen()
-            with TabPane(TabIds.SETTINGS.capitalize(), id=TabIds.SETTINGS):
+            with TabPane(TabIds.SETTINGS.name, id=TabIds.SETTINGS.id):
                 yield SettingsScreen()
 
     def action_quit_app(self) -> None:
