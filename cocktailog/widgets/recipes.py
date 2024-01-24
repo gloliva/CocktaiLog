@@ -19,8 +19,8 @@ class RecipeMainScreen(Static):
                 classes="recipe_buttons",
             ),
             Button(
-                ButtonIds.RECIPE_ADD.name,
-                id=ButtonIds.RECIPE_ADD.id,
+                ButtonIds.RECIPE_MODIFY.name,
+                id=ButtonIds.RECIPE_MODIFY.id,
                 classes="recipe_buttons",
             ),
             Button(
@@ -35,7 +35,7 @@ class RecipeMainScreen(Static):
 
         if button_id == ButtonIds.RECIPE_SEARCH.id:
             pass
-        elif button_id == ButtonIds.RECIPE_ADD.id:
+        elif button_id == ButtonIds.RECIPE_MODIFY.id:
             pass
         elif button_id == ButtonIds.HOME.id:
             tabs = self.app.query_one(TabbedContent)

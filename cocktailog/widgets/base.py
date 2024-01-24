@@ -32,6 +32,10 @@ class ButtonIds:
     HOME_RECIPES = "home_recipes"
     HOME_SETTINGS = "home_settings"
 
+    # Ingredients page
+    INGREDIENTS_SEARCH = Id("Search Ingredient(s)", "ingredients_search")
+    INGREDIENTS_MODIFY = Id("Add / Update Ingredient(s)", "ingredients_modify")
+
     # Recipes page
-    RECIPE_SEARCH = Id("Search Recipe(s)", "search_recipes")
-    RECIPE_ADD = Id("Add Recipe(s)", "add_recipes")
+    RECIPE_SEARCH = Id("Search Recipe(s)", "recipes_search")
+    RECIPE_MODIFY = Id("Add / Update Recipe(s)", "recipes_modify")
