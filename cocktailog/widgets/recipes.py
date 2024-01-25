@@ -22,8 +22,6 @@ from widgets.base import ButtonIds, TabIds
 
 
 class IngredientSearchTabs(Static):
-    INGREDIENT_SEARCH_ID = "ingredient_search_list"
-
     def compose(self) -> ComposeResult:
         with TabbedContent(initial=TabIds.RECIPE_SPIRIT.id, id=TabIds.RECIPE_TAB_MANAGER.id):
             with TabPane(TabIds.RECIPE_SPIRIT.name, id=TabIds.RECIPE_SPIRIT.id):
@@ -116,10 +114,20 @@ class IngredientSearchTabs(Static):
                 )
 
 
+class IngredientSearch(Static):
+    INGREDIENT_SEARCH_INPUT_ID = "ingredient_search_list"
+
+    def compose(self) -> ComposeResult:
+        yield Input(
+            placeholder="Search for Ingredients...",
+            id=self.INGREDIENT_SEARCH_INPUT_ID,
+        )
+        yield IngredientSearchTabs()
+
+
 class RecipeHomeScreen(Static):
     RECIPE_LIST_ID = "recipe_list"
     RECIPE_SEARCH_ID = "recipe_search_input"
-    INGREDIENT_SEARCH_ID = "ingredient_search_list"
 
     def compose(self) -> ComposeResult:
         yield VerticalScroll(
@@ -132,7 +140,7 @@ class RecipeHomeScreen(Static):
                 id=self.RECIPE_LIST_ID,
             ),
             Collapsible(
-                IngredientSearchTabs(),
+                IngredientSearch(),
                 title="Search by Ingredients",
                 collapsed=True,
             ),
