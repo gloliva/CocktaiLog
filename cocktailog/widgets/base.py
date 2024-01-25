@@ -26,11 +26,12 @@ class TabIds:
 class ButtonIds:
     # All pages
     HOME = Id("Home", "home_button")
+    BACK = Id("Go Back", "back_button")
 
     # Home page
-    HOME_INGREDIENTS = "home_ingredients"
-    HOME_RECIPES = "home_recipes"
-    HOME_SETTINGS = "home_settings"
+    HOME_INGREDIENTS = Id("Ingredients", "home_ingredients")
+    HOME_RECIPES = Id("Recipes", "home_recipes")
+    HOME_SETTINGS = Id("Settings", "home_settings")
 
     # Ingredients page
     INGREDIENTS_SEARCH = Id("Search Ingredient(s)", "ingredients_search")
