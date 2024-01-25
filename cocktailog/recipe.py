@@ -6,9 +6,13 @@ from enum import Enum
 from hashlib import md5
 from random import choice
 
+# 3rd-party imports
+from pygtrie import CharTrie
+
 # project imports
 from db import tables
 from db.api import Database
+from helpers import capitalize_all
 from ingredients import Ingredient, IngredientSearch, IngredientManager
 
 # mypy imports
@@ -137,10 +141,23 @@ class RecipeManager:
     def __init__(self, db: Database, ingredient_manager: IngredientManager) -> None:
         self.db = db
         self.ingredient_manager = ingredient_manager
+        self.recipe_names = CharTrie()
+        self.recipe_names.enable_sorting()
         self.recipes: Dict[str, Recipe] = {}
 
     def get_by_name(self, name: str, version: int = 1) -> Recipe:
         return self.recipes[str(Recipe.hash(name, version))]
+
+    def get_all_recipe_names(self, prefix: str = "") -> List[str]:
+        try:
+            recipe_names = [
+                capitalize_all(recipe[0])
+                for recipe in self.recipe_names.items(prefix=prefix.lower())
+            ]
+        except KeyError:
+            recipe_names = []
+
+        return recipe_names
 
     def search_by_ingredients(
             self,
@@ -182,6 +199,7 @@ class RecipeManager:
                 )
                 recipe.add_items(recipe_item)
 
+            self.recipe_names[recipe.name.lower()] = True
             self.recipes[recipe.id] = recipe
 
     def convert_to_json(self) -> None:
