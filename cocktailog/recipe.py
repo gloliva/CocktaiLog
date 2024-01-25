@@ -27,6 +27,7 @@ class Units(Enum):
     TEASPOON = "tsp"
     TABLESPOON = "tbl"
     BARSPOON = "barspoon"
+    LEAVES = "leaves"
     OTHER = "other"
 
 
@@ -39,14 +40,14 @@ class RecipeItem:
         Units.TEASPOON.value: Units.TEASPOON,
         Units.TABLESPOON.value: Units.TABLESPOON,
         Units.BARSPOON.value: Units.BARSPOON,
+        Units.LEAVES.value: Units.LEAVES,
         Units.OTHER.value: Units.OTHER,
     }
 
-    def __init__(self, ingredient: Ingredient, amount: Union[float, int], unit: Union[Units, str], dirty: int = 0) -> None:
+    def __init__(self, ingredient: Ingredient, amount: Union[float, int], unit: Union[Units, str]) -> None:
         self.ingredient: Ingredient = ingredient
         self.amount = amount
         self.unit = unit if isinstance(unit, Units) else self.UNITS_TO_CLASS[unit]
-        self.dirty = dirty
 
     @property
     def json_kwargs(self) -> Dict[str, Any]:
@@ -64,12 +65,11 @@ class RecipeItem:
 
 
 class Recipe:
-    def __init__(self, name: str, version: int = 1, dirty: int = 0) -> None:
+    def __init__(self, name: str, version: int = 1) -> None:
         self.name: str = name
         self.version: int = version
         self.items: List[RecipeItem] = []
         self.id = str(self.__hash__())
-        self.dirty = dirty
 
     @staticmethod
     def hash(name: str, version: int) -> None:
@@ -119,11 +119,7 @@ class Recipe:
                 amount=item.amount,
                 unit=item.unit.value,
             )
-            self.db.insert(recipe_item_entry)
-            item.dirty = 0
-
-        # Mark recipe as written to db
-        self.dirty = 0
+            db.insert(recipe_item_entry)
 
     def __hash__(self) -> int:
         str_to_hash = self.name + str(self.version)

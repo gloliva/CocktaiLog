@@ -6,6 +6,7 @@ from textual.app import ComposeResult
 from textual.containers import VerticalScroll
 from textual.widgets import (
     Button,
+    Collapsible,
     Input,
     OptionList,
     SelectionList,
@@ -33,9 +34,13 @@ class RecipeHomeScreen(Static):
                 *self.app.rm.get_all_recipe_names(),
                 id=self.RECIPE_LIST_ID,
             ),
-            SelectionList(
-                *self.app.im.get_all_ingredient_names(use_selection_format=True),
-                id=self.INGREDIENT_SEARCH_ID,
+            Collapsible(
+                SelectionList(
+                    *self.app.im.get_all_ingredient_names(use_selection_format=True),
+                    id=self.INGREDIENT_SEARCH_ID,
+                ),
+                title="Search by Ingredients",
+                collapsed=True,
             ),
             Button(
                 ButtonIds.HOME.name,
@@ -55,7 +60,7 @@ class RecipeHomeScreen(Static):
         input_value = event.value
 
         if input_id == self.RECIPE_SEARCH_ID:
-            option_list = self.query_one(OptionList)
+            option_list = self.query_one(f"#{self.RECIPE_LIST_ID}", OptionList)
             options = self.app.rm.get_all_recipe_names(prefix=input_value)
 
             if not options:
