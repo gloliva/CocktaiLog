@@ -8,6 +8,7 @@ from textual.widgets import (
     Button,
     Input,
     OptionList,
+    SelectionList,
     Static,
     TabbedContent,
 )
@@ -20,6 +21,7 @@ from widgets.base import ButtonIds, TabIds
 class RecipeHomeScreen(Static):
     RECIPE_LIST_ID = "recipe_list"
     RECIPE_SEARCH_ID = "recipe_search_input"
+    INGREDIENT_SEARCH_ID = "ingredient_search_list"
 
     def compose(self) -> ComposeResult:
         yield VerticalScroll(
@@ -30,6 +32,10 @@ class RecipeHomeScreen(Static):
             OptionList(
                 *self.app.rm.get_all_recipe_names(),
                 id=self.RECIPE_LIST_ID,
+            ),
+            SelectionList(
+                *self.app.im.get_all_ingredient_names(use_selection_format=True),
+                id=self.INGREDIENT_SEARCH_ID,
             ),
             Button(
                 ButtonIds.HOME.name,

@@ -164,6 +164,38 @@ class IngredientManager:
         for ingredient in ingredients:
             self.available_ingredients[ingredient.id] = ingredient
 
+    def get_all_ingredient_names(
+            self,
+            include_style: bool = True,
+            include_brand: bool = True,
+            use_only_available: bool = False,
+            use_selection_format: bool = False,
+        ) -> List[str]:
+        ingredients = []
+        ingredients_to_search = list(self.available_ingredients.values())
+
+        if not use_only_available:
+            ingredients_to_search.extend(
+                list(self.recipe_ingredients.values())
+            )
+
+        for ingredient in ingredients_to_search:
+            name_parts = []
+
+            if include_brand and ingredient.brand is not None:
+                name_parts.append(ingredient.brand)
+
+            if include_style and ingredient.style is not None:
+                name_parts.append(ingredient.style)
+
+            name_parts.append(ingredient.type)
+            full_name = capitalize_all(" ".join(name_parts))
+            ingredient_name = (full_name, ingredient.id, False) if use_selection_format else full_name
+
+            ingredients.append(ingredient_name)
+
+        return ingredients
+
     def convert_to_json(self) -> Dict[str, List[Dict[str, str]]]:
         outdict = {
             "recipe_ingredients": [],
