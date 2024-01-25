@@ -179,6 +179,8 @@ class IngredientManager:
             include_style: bool = True,
             include_brand: bool = True,
             use_only_available: bool = False,
+            category_filter: IngredientType | None = None,
+            sort_results: bool = False,
             use_selection_format: bool = False,
         ) -> List[str]:
         ingredients = []
@@ -190,6 +192,9 @@ class IngredientManager:
             )
 
         for ingredient in ingredients_to_search:
+            if category_filter is not None and ingredient.category != category_filter:
+                continue
+
             name_parts = []
 
             if include_brand and ingredient.brand is not None:
@@ -203,6 +208,12 @@ class IngredientManager:
             ingredient_name = (full_name, ingredient.id, False) if use_selection_format else full_name
 
             ingredients.append(ingredient_name)
+
+        if sort_results:
+            if use_selection_format:
+                ingredients.sort(key=lambda x: x[0])
+            else:
+                ingredients.sort()
 
         return ingredients
 
