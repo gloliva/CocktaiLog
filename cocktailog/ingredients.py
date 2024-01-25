@@ -22,6 +22,8 @@ class IngredientType(Enum):
     BITTERS = "bitters"
     JUICE = "juice"
     SYRUP = "syrup"
+    WATER = "water"
+    HERB = "herb"
     GARNISH = "garnish"
     OTHER = "other"
 
@@ -35,6 +37,8 @@ class Ingredient:
         IngredientType.BITTERS.value: IngredientType.BITTERS,
         IngredientType.JUICE.value: IngredientType.JUICE,
         IngredientType.SYRUP.value: IngredientType.SYRUP,
+        IngredientType.WATER.value: IngredientType.WATER,
+        IngredientType.HERB.value: IngredientType.HERB,
         IngredientType.GARNISH.value: IngredientType.GARNISH,
         IngredientType.OTHER.value: IngredientType.OTHER,
     }
@@ -45,16 +49,16 @@ class Ingredient:
             type: str,
             style: str = None,
             brand: str = None,
+            infusion: str = None,
             notes: str = None,
-            dirty: int = 0,
         ) -> None:
         self.category = category if isinstance(category, IngredientType) else self.CATEGORY_TO_CLASS[category]
         self.type = type
         self.style = style
         self.brand = brand
+        self.infusion = infusion
         self.notes = notes
         self.id = str(self.__hash__())
-        self.dirty = dirty
 
     @property
     def db_kwargs(self) -> Dict[str, str]:
@@ -64,6 +68,7 @@ class Ingredient:
             "type": self.type,
             "style": self.style,
             "brand": self.brand,
+            "infusion": self.infusion,
             "notes": self.notes,
         }
 
@@ -74,13 +79,13 @@ class Ingredient:
             "type": self.type,
             "style": self.style,
             "brand": self.brand,
+            "infusion": self.infusion,
             "notes": self.notes,
         }
 
     def write_to_db(self, db: Database) -> None:
         ingredient_entry = tables.Ingredients(**self.db_kwargs)
         db.insert(ingredient_entry)
-        self.dirty = 0
 
 
     def __hash__(self) -> int:
@@ -92,13 +97,18 @@ class Ingredient:
         if self.brand is not None:
             str_to_hash += self.brand
 
-        if self.notes is not None:
-            str_to_hash += self.notes
+        if self.infusion is not None:
+            str_to_hash += self.infusion
 
         return int(md5(str_to_hash.encode("utf-8"), usedforsecurity=False).hexdigest(), 16)
 
     def __repr__(self) -> str:
         details = []
+
+        if self.infusion is not None:
+            details.append(
+                f"{capitalize_all(self.infusion)}-infused"
+            )
 
         if self.brand is not None:
             details.append(
