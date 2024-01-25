@@ -37,7 +37,7 @@ class Cocktailog(App[int]):
         Binding("ctrl+e", "export_data", "Export data from JSON file"),
     ]
 
-    def on_mount(self) -> None:
+    def setup(self) -> None:
         # set up tkinter
         self.tk_root = tk.Tk()
         self.tk_root.withdraw()

@@ -13,6 +13,7 @@ from typing import Optional
 
 def main() -> Optional[int]:
     app = Cocktailog()
+    app.setup()
     app.run()
     return app.return_code
 
