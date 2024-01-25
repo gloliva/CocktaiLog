@@ -17,6 +17,7 @@ from textual.widgets import (
 from textual.widgets.option_list import Option
 
 # project imports
+from ingredients import IngredientType
 from widgets.base import ButtonIds, TabIds
 
 
@@ -24,14 +25,95 @@ class IngredientSearchTabs(Static):
     INGREDIENT_SEARCH_ID = "ingredient_search_list"
 
     def compose(self) -> ComposeResult:
-        with TabbedContent():
-            with TabPane("Tab One"):
+        with TabbedContent(initial=TabIds.RECIPE_SPIRIT.id, id=TabIds.RECIPE_TAB_MANAGER.id):
+            with TabPane(TabIds.RECIPE_SPIRIT.name, id=TabIds.RECIPE_SPIRIT.id):
                 yield SelectionList(
-                    *self.app.im.get_all_ingredient_names(use_selection_format=True),
-                    id=self.INGREDIENT_SEARCH_ID,
+                    *self.app.im.get_all_ingredient_names(
+                        use_selection_format=True,
+                        sort_results=True,
+                        category_filter=IngredientType.SPIRIT,
+                    ),
                 )
-            with TabPane("Tab Two"):
-                yield Static()
+            with TabPane(TabIds.RECIPE_LIQUEUR.name, id=TabIds.RECIPE_LIQUEUR.id):
+                yield SelectionList(
+                    *self.app.im.get_all_ingredient_names(
+                        use_selection_format=True,
+                        sort_results=True,
+                        category_filter=IngredientType.LIQUEUR,
+                    ),
+                )
+            with TabPane(TabIds.RECIPE_WINE.name, id=TabIds.RECIPE_WINE.id):
+                yield SelectionList(
+                    *self.app.im.get_all_ingredient_names(
+                        use_selection_format=True,
+                        sort_results=True,
+                        category_filter=IngredientType.WINE,
+                    ),
+                )
+            with TabPane(TabIds.RECIPE_JUICE.name, id=TabIds.RECIPE_JUICE.id):
+                yield SelectionList(
+                    *self.app.im.get_all_ingredient_names(
+                        use_selection_format=True,
+                        sort_results=True,
+                        category_filter=IngredientType.JUICE,
+                    ),
+                )
+            with TabPane(TabIds.RECIPE_SYRUP.name, id=TabIds.RECIPE_SYRUP.id):
+                yield SelectionList(
+                    *self.app.im.get_all_ingredient_names(
+                        use_selection_format=True,
+                        sort_results=True,
+                        category_filter=IngredientType.SYRUP,
+                    ),
+                )
+            with TabPane(TabIds.RECIPE_BITTERS.name, id=TabIds.RECIPE_BITTERS.id):
+                yield SelectionList(
+                    *self.app.im.get_all_ingredient_names(
+                        use_selection_format=True,
+                        sort_results=True,
+                        category_filter=IngredientType.BITTERS,
+                    ),
+                )
+            with TabPane(TabIds.RECIPE_BEER.name, id=TabIds.RECIPE_BEER.id):
+                yield SelectionList(
+                    *self.app.im.get_all_ingredient_names(
+                        use_selection_format=True,
+                        sort_results=True,
+                        category_filter=IngredientType.BEER,
+                    ),
+                )
+            with TabPane(TabIds.RECIPE_GARNISH.name, id=TabIds.RECIPE_GARNISH.id):
+                yield SelectionList(
+                    *self.app.im.get_all_ingredient_names(
+                        use_selection_format=True,
+                        sort_results=True,
+                        category_filter=IngredientType.GARNISH,
+                    ),
+                )
+            with TabPane(TabIds.RECIPE_HERB.name, id=TabIds.RECIPE_HERB.id):
+                yield SelectionList(
+                    *self.app.im.get_all_ingredient_names(
+                        use_selection_format=True,
+                        sort_results=True,
+                        category_filter=IngredientType.HERB,
+                    ),
+                )
+            with TabPane(TabIds.RECIPE_WATER.name, id=TabIds.RECIPE_WATER.id):
+                yield SelectionList(
+                    *self.app.im.get_all_ingredient_names(
+                        use_selection_format=True,
+                        sort_results=True,
+                        category_filter=IngredientType.WATER,
+                    ),
+                )
+            with TabPane(TabIds.RECIPE_OTHER.name, id=TabIds.RECIPE_OTHER.id):
+                yield SelectionList(
+                    *self.app.im.get_all_ingredient_names(
+                        use_selection_format=True,
+                        sort_results=True,
+                        category_filter=IngredientType.OTHER,
+                    ),
+                )
 
 
 class RecipeHomeScreen(Static):
