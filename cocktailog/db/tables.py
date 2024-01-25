@@ -27,6 +27,7 @@ class Ingredients(Base):
     type = Column(String, nullable=False)
     style = Column(String)
     brand = Column(String)
+    infusion = Column(String)
     notes = Column(String)
 
 
