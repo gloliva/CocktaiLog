@@ -12,11 +12,26 @@ from textual.widgets import (
     SelectionList,
     Static,
     TabbedContent,
+    TabPane,
 )
 from textual.widgets.option_list import Option
 
 # project imports
 from widgets.base import ButtonIds, TabIds
+
+
+class IngredientSearchTabs(Static):
+    INGREDIENT_SEARCH_ID = "ingredient_search_list"
+
+    def compose(self) -> ComposeResult:
+        with TabbedContent():
+            with TabPane("Tab One"):
+                yield SelectionList(
+                    *self.app.im.get_all_ingredient_names(use_selection_format=True),
+                    id=self.INGREDIENT_SEARCH_ID,
+                )
+            with TabPane("Tab Two"):
+                yield Static()
 
 
 class RecipeHomeScreen(Static):
@@ -35,10 +50,7 @@ class RecipeHomeScreen(Static):
                 id=self.RECIPE_LIST_ID,
             ),
             Collapsible(
-                SelectionList(
-                    *self.app.im.get_all_ingredient_names(use_selection_format=True),
-                    id=self.INGREDIENT_SEARCH_ID,
-                ),
+                IngredientSearchTabs(),
                 title="Search by Ingredients",
                 collapsed=True,
             ),
@@ -52,7 +64,7 @@ class RecipeHomeScreen(Static):
         button_id = event.button.id
 
         if button_id == ButtonIds.HOME.id:
-            tabs = self.app.query_one(TabbedContent)
+            tabs = self.app.query_one(f"#{TabIds.TAB_MANAGER.id}", TabbedContent)
             tabs.active = TabIds.HOME.id
 
     def on_input_changed(self, event: Input.Changed) -> None:

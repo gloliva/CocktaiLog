@@ -22,7 +22,7 @@ class HomeScreen(Static):
 
     def on_button_pressed(self, event: Button.Pressed):
         button_id = event.button.id
-        tabs = self.app.query_one(TabbedContent)
+        tabs = self.app.query_one(f"#{TabIds.TAB_MANAGER.id}", TabbedContent)
 
         if button_id == ButtonIds.HOME_INGREDIENTS.id:
            tabs.active = TabIds.INGREDIENTS.id

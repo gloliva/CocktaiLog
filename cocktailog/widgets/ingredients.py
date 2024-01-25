@@ -35,5 +35,5 @@ class IngredientsScreen(Static):
         elif button_id == ButtonIds.INGREDIENTS_MODIFY.id:
             pass
         elif button_id == ButtonIds.HOME.id:
-            tabs = self.app.query_one(TabbedContent)
+            tabs = self.app.query_one(f"#{TabIds.TAB_MANAGER.id}", TabbedContent)
             tabs.active = TabIds.HOME.id

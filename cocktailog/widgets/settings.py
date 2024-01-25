@@ -44,5 +44,5 @@ class SettingsScreen(Static):
         button_id = event.button.id
 
         if button_id == ButtonIds.HOME.id:
-            tabs = self.app.query_one(TabbedContent)
+            tabs = self.app.query_one(f"#{TabIds.TAB_MANAGER.id}", TabbedContent)
             tabs.active = TabIds.HOME.id
