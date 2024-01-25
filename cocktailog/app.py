@@ -20,6 +20,7 @@ from textual.widgets import (
 # project imports
 from db.api import Database
 from defs import JSON_EXPORT_FILENAME, STYLES_FILEPATH
+from helpers import get_css_files
 from ingredients import IngredientManager
 from widgets.base import TabIds
 from widgets.home import HomeScreen
@@ -30,7 +31,7 @@ from recipe import RecipeManager
 
 
 class Cocktailog(App[int]):
-    CSS_PATH = STYLES_FILEPATH
+    CSS_PATH = get_css_files()
     BINDINGS = [
         Binding("q", "quit_app", "Quit App"),
         Binding("ctrl+i", "import_data", "Import data from JSON file"),
