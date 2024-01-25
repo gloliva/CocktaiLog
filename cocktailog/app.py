@@ -19,7 +19,7 @@ from textual.widgets import (
 
 # project imports
 from db.api import Database
-from defs import JSON_EXPORT_FILENAME, STYLES_FILEPATH
+from defs import JSON_EXPORT_FILENAME
 from helpers import get_css_files
 from ingredients import IngredientManager
 from widgets.base import TabIds
