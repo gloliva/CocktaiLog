@@ -1,0 +1,4 @@
+Horizontal {
+    height: auto;
+    width: auto;
+}
