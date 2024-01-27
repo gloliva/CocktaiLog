@@ -241,18 +241,22 @@ class IngredientManager:
 
     def update_selected_ingredients(self, selection_id: str, selected: List[str]):
         selected_ingredients = [
-            self.get_by_id(ingredient_id).full_name
+            self.get_by_id(ingredient_id)
             for ingredient_id in selected
         ]
-        selected_ingredients.sort()
+        selected_ingredients.sort(key=lambda x: x.full_name)
         self.selected_ingredients[selection_id] = selected_ingredients
 
-    def get_selected_ingredient_names(self):
-        ingredient_names = []
+    def get_selected_ingredients(self, name_only: bool = False):
+        ingredients = []
         for ingredient_category in self.selected_ingredients.values():
-            ingredient_names.extend(ingredient_category)
+            for ingredient in ingredient_category:
+                if name_only:
+                    ingredients.append(ingredient.full_name)
+                else:
+                    ingredients.append(ingredient)
 
-        return ingredient_names
+        return ingredients
 
     def convert_to_json(self) -> Dict[str, List[Dict[str, str]]]:
         outdict = {

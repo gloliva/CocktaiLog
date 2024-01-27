@@ -31,6 +31,11 @@ class Units(Enum):
     OTHER = "other"
 
 
+class Preparation(Enum):
+    SHAKEN = "shaken"
+    STIRRED = "stirred"
+
+
 class RecipeItem:
     UNITS_TO_CLASS = {
         Units.OZ.value: Units.OZ,
@@ -165,7 +170,7 @@ class RecipeManager:
             if recipe.contains_ingredients(ingredients_to_search, strict):
                 makeable_recipes.append(recipe)
 
-        makeable_recipes.sort()
+        makeable_recipes.sort(key=lambda x: x.name)
         return makeable_recipes
 
     def get_random(self) -> Recipe:

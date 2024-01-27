@@ -17,7 +17,7 @@ from textual.widgets import (
 from textual.widgets.option_list import Option
 
 # project imports
-from ingredients import IngredientType
+from ingredients import IngredientType, IngredientSearch
 from widgets.base import ButtonIds, TabIds
 
 
@@ -141,12 +141,13 @@ class IngredientSearchScreen(Static):
             id=self.INGREDIENT_SEARCH_INPUT_ID,
         )
         yield OptionList(
-            Option("No Ingredients Selected", disabled=True),
+            Option("No Ingredient(s) Selected", disabled=True),
             id=self.INGREDIENT_SEARCH_OPTION_LIST_ID,
         )
         yield IngredientSearchTabs()
 
     def on_selection_list_selected_changed(self, event: SelectionList.SelectedChanged):
+        # Update ingredients list
         option_list = self.app.query_one(f"#{self.INGREDIENT_SEARCH_OPTION_LIST_ID}", OptionList)
 
         self.app.im.update_selected_ingredients(
@@ -154,10 +155,13 @@ class IngredientSearchScreen(Static):
             event.selection_list.selected,
         )
 
-        ingredient_names = self.app.im.get_selected_ingredient_names()
+        options = self.app.im.get_selected_ingredients(name_only=True)
+
+        if not options:
+            options = [Option(f"No Ingredient(s) Selected", disabled=True)]
 
         option_list.clear_options()
-        option_list.add_options(ingredient_names)
+        option_list.add_options(options)
 
 
 class RecipeHomeScreen(Static):
@@ -206,3 +210,30 @@ class RecipeHomeScreen(Static):
 
             option_list.clear_options()
             option_list.add_options(options)
+
+    def on_selection_list_selected_changed(self, event: SelectionList.SelectedChanged):
+        # Update ingredients list
+        option_list = self.app.query_one(f"#{self.RECIPE_LIST_ID}", OptionList)
+
+        selected_ingredients = self.app.im.get_selected_ingredients()
+        ingredients_to_search = [
+            IngredientSearch(
+                ingredient,
+                include_style=True,
+                include_brand=True,
+            )
+            for ingredient in selected_ingredients
+        ]
+
+        if not ingredients_to_search:
+            return
+
+        recipes = self.app.rm.search_by_ingredients(ingredients_to_search)
+
+        if not recipes:
+            options = [Option(f"No Recipe(s) Found", disabled=True)]
+        else:
+            options = [recipe.name for recipe in recipes]
+
+        option_list.clear_options()
+        option_list.add_options(options)
