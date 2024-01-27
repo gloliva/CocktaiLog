@@ -44,14 +44,14 @@ class Cocktailog(App[int]):
         self.tk_root.withdraw()
 
         # set up db
-        self.db = Database()
+        self.db: Database = Database()
         self.db.init_db()
         self.db.connect()
         self.db.create_tables()
 
         # set up ingredients and recipes
-        self.im = IngredientManager(self.db)
-        self.rm = RecipeManager(self.db, self.im)
+        self.im: IngredientManager = IngredientManager(self.db)
+        self.rm: RecipeManager = RecipeManager(self.db, self.im)
 
         # load all from db
         self.im.load_all_from_db()
