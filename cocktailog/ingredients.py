@@ -5,6 +5,9 @@ Author: Gregg Oliva
 from enum import Enum
 from hashlib import md5
 
+# 3rd-party imports
+from sortedcontainers import SortedDict
+
 # project imports
 from db import tables
 from db.api import Database
@@ -82,6 +85,24 @@ class Ingredient:
             "infusion": self.infusion,
             "notes": self.notes,
         }
+
+    @property
+    def full_name(self) -> str:
+        name_parts = []
+
+        if self.infusion is not None:
+            name_parts.append(f"{self.infusion}-infused")
+
+        if self.brand is not None:
+            name_parts.append(self.brand)
+
+        if self.style is not None:
+            name_parts.append(self.style)
+
+        name_parts.append(self.type)
+        name = capitalize_all(" ".join(name_parts))
+
+        return name
 
     def write_to_db(self, db: Database) -> None:
         ingredient_entry = tables.Ingredients(**self.db_kwargs)
@@ -162,6 +183,7 @@ class IngredientManager:
         self.db = db
         self.recipe_ingredients: Dict[str, Ingredient] = {}
         self.available_ingredients: Dict[str, Ingredient] = {}
+        self.selected_ingredients = SortedDict()
 
     def get_by_id(self, id: str) -> Ingredient:
         return self.recipe_ingredients[id]
@@ -216,6 +238,21 @@ class IngredientManager:
                 ingredients.sort()
 
         return ingredients
+
+    def update_selected_ingredients(self, selection_id: str, selected: List[str]):
+        selected_ingredients = [
+            self.get_by_id(ingredient_id).full_name
+            for ingredient_id in selected
+        ]
+        selected_ingredients.sort()
+        self.selected_ingredients[selection_id] = selected_ingredients
+
+    def get_selected_ingredient_names(self):
+        ingredient_names = []
+        for ingredient_category in self.selected_ingredients.values():
+            ingredient_names.extend(ingredient_category)
+
+        return ingredient_names
 
     def convert_to_json(self) -> Dict[str, List[Dict[str, str]]]:
         outdict = {
