@@ -28,8 +28,13 @@ OptionList {
 
 #recipe_tab_selected_ingredient_option_list {
     height: 10;
-    width: 80;
+    width: 98%;
     align: left middle;
+    margin: 0 0 1 0;
+}
+
+#recipe_tab_ingredient_search_input {
+    width: 98%;
 }
 
 #recipe_tab_home_button {
@@ -45,12 +50,6 @@ OptionList {
 TabPane {
     align: center middle;
     # height: 10;
-}
-
-.recipe_tab_ingredient_search_tab_class {
-    width: 50%;
-    height: 10;
-
 }
 
 VerticalScroll {

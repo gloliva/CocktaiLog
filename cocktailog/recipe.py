@@ -97,15 +97,29 @@ class Recipe:
         self.items.extend(list(items))
 
     def contains_ingredients(self, ingredients_to_search: List[IngredientSearch], strict=False) -> bool:
-        for item in self.items:
-            equals = False
+        # return True only if all recipe items are found in ingredients_to_search
+        if strict:
+            for item in self.items:
+                equals = False
+                for ingredient in ingredients_to_search:
+                    equals = equals or ingredient.equals(item.ingredient)
+
+                if not equals:
+                    return False
+
+            return True
+        # return True only if all ingredients_to_search are contained in the recipe items
+        else:
             for ingredient in ingredients_to_search:
-                equals = equals or ingredient.equals(item.ingredient)
+                equals = False
+                for item in self.items:
+                    equals = equals or ingredient.equals(item.ingredient)
 
-            if not equals:
-                return False
+                if not equals:
+                    return False
 
-        return True
+            return True
+
 
     def write_to_db(self, db: Database) -> None:
         # Add recipe to the database

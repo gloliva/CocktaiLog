@@ -226,9 +226,11 @@ class RecipeHomeScreen(Static):
         ]
 
         if not ingredients_to_search:
+            option_list.clear_options()
+            option_list.add_options(self.app.rm.get_all_recipe_names())
             return
 
-        recipes = self.app.rm.search_by_ingredients(ingredients_to_search)
+        recipes = self.app.rm.search_by_ingredients(ingredients_to_search, strict=False)
 
         if not recipes:
             options = [Option(f"No Recipe(s) Found", disabled=True)]
