@@ -1,5 +1,5 @@
 Collapsible {
-    width: 60.5%;
+    width: 61%;
     border: tall black;
     margin: 1 0;
     padding: 0 0;
@@ -8,6 +8,7 @@ Collapsible {
 OptionList {
     height: auto;
     width: 60%;
+    height: 10;
     padding: 0 2;
     border: tall black;
     content-align: left middle;
@@ -38,18 +39,14 @@ OptionList {
 }
 
 #recipe_tab_home_button {
-    # background: blue 50%;
-    # border:  white;
-    # border: none;
     offset-x: 1;
-    width: 60%;
+    width: 60.5%;
     height: auto
 
 }
 
 TabPane {
     align: center middle;
-    # height: 10;
 }
 
 VerticalScroll {
