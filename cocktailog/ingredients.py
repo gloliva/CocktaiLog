@@ -31,6 +31,12 @@ class IngredientType(Enum):
     OTHER = "other"
 
 
+class IngredientSearchMode(Enum):
+    EXACT_MATCH = 0
+    AT_LEAST_MATCH = 1
+    AT_MOST_MATCH = 2
+
+
 class Ingredient:
     CATEGORY_TO_CLASS = {
         IngredientType.SPIRIT.value: IngredientType.SPIRIT,

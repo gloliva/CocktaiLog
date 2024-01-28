@@ -17,7 +17,7 @@ from textual.widgets import (
 from textual.widgets.option_list import Option
 
 # project imports
-from ingredients import IngredientType, IngredientSearch
+from ingredients import IngredientType, IngredientSearch, IngredientSearchMode
 from widgets.base import ButtonIds, TabIds
 
 
@@ -132,17 +132,17 @@ class IngredientSearchTabs(Static):
 
 
 class IngredientSearchScreen(Static):
-    INGREDIENT_SEARCH_INPUT_ID = "ingredient_search_list"
+    INGREDIENT_SEARCH_INPUT_ID = "recipe_tab_ingredient_search_input"
     INGREDIENT_SEARCH_OPTION_LIST_ID = "recipe_tab_selected_ingredient_option_list"
 
     def compose(self) -> ComposeResult:
-        yield Input(
-            placeholder="Search Ingredients",
-            id=self.INGREDIENT_SEARCH_INPUT_ID,
-        )
         yield OptionList(
             Option("No Ingredient(s) Selected", disabled=True),
             id=self.INGREDIENT_SEARCH_OPTION_LIST_ID,
+        )
+        yield Input(
+            placeholder="Search Ingredients",
+            id=self.INGREDIENT_SEARCH_INPUT_ID,
         )
         yield IngredientSearchTabs()
 
@@ -230,7 +230,7 @@ class RecipeHomeScreen(Static):
             option_list.add_options(self.app.rm.get_all_recipe_names())
             return
 
-        recipes = self.app.rm.search_by_ingredients(ingredients_to_search, strict=False)
+        recipes = self.app.rm.search_by_ingredients(ingredients_to_search, IngredientSearchMode.AT_LEAST_MATCH)
 
         if not recipes:
             options = [Option(f"No Recipe(s) Found", disabled=True)]

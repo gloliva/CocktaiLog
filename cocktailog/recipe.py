@@ -13,7 +13,12 @@ from pygtrie import CharTrie
 from db import tables
 from db.api import Database
 from helpers import capitalize_all
-from ingredients import Ingredient, IngredientSearch, IngredientManager
+from ingredients import (
+    Ingredient,
+    IngredientSearch,
+    IngredientSearchMode,
+    IngredientManager,
+)
 
 # mypy imports
 from typing import Any, Dict, List, Union
@@ -96,23 +101,44 @@ class Recipe:
     def add_items(self, *items: List[RecipeItem]) -> None:
         self.items.extend(list(items))
 
-    def contains_ingredients(self, ingredients_to_search: List[IngredientSearch], strict=False) -> bool:
-        # return True only if all recipe items are found in ingredients_to_search
-        if strict:
-            for item in self.items:
+    def contains_ingredients(
+        self,
+        ingredients_to_search: List[IngredientSearch],
+        search_mode: IngredientSearchMode
+        ) -> bool:
+        # return True only if all recipe items strictly match all ingredients to search
+        if search_mode == IngredientSearchMode.EXACT_MATCH:
+            num_recipe_items = len(self.items)
+            if len(ingredients_to_search) != num_recipe_items:
+                return False
+
+            for ingredient in ingredients_to_search:
                 equals = False
-                for ingredient in ingredients_to_search:
+                for item in self.items:
                     equals = equals or ingredient.equals(item.ingredient)
 
                 if not equals:
                     return False
 
             return True
+
         # return True only if all ingredients_to_search are contained in the recipe items
-        else:
+        elif search_mode == IngredientSearchMode.AT_LEAST_MATCH:
             for ingredient in ingredients_to_search:
                 equals = False
                 for item in self.items:
+                    equals = equals or ingredient.equals(item.ingredient)
+
+                if not equals:
+                    return False
+
+            return True
+
+        # return True only if all recipe items are found in ingredients_to_search
+        elif search_mode == IngredientSearchMode.AT_MOST_MATCH:
+            for item in self.items:
+                equals = False
+                for ingredient in ingredients_to_search:
                     equals = equals or ingredient.equals(item.ingredient)
 
                 if not equals:
@@ -177,11 +203,11 @@ class RecipeManager:
     def search_by_ingredients(
             self,
             ingredients_to_search: List[IngredientSearch],
-            strict=False,
+            search_mode: IngredientSearchMode,
         ) -> List[Recipe]:
         makeable_recipes = []
         for recipe in self.recipes.values():
-            if recipe.contains_ingredients(ingredients_to_search, strict):
+            if recipe.contains_ingredients(ingredients_to_search, search_mode):
                 makeable_recipes.append(recipe)
 
         makeable_recipes.sort(key=lambda x: x.name)
