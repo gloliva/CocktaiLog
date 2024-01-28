@@ -24,8 +24,8 @@ from helpers import get_css_files
 from ingredients import IngredientManager
 from widgets.base import TabIds
 from widgets.home import HomeScreen
-from widgets.ingredients import IngredientsScreen
-from widgets.recipes import RecipeHomeScreen
+from widgets.build import BuildHomeScreen
+from widgets.search import SearchHomeScreen
 from widgets.settings import SettingsScreen
 from recipe import RecipeManager
 
@@ -63,10 +63,10 @@ class Cocktailog(App[int]):
         with TabbedContent(initial=TabIds.HOME.id, id=TabIds.TAB_MANAGER.id):
             with TabPane(TabIds.HOME.name, id=TabIds.HOME.id):
                 yield HomeScreen()
-            with TabPane(TabIds.INGREDIENTS.name, id=TabIds.INGREDIENTS.id):
-                yield IngredientsScreen()
-            with TabPane(TabIds.RECIPES.name, id=TabIds.RECIPES.id):
-                yield RecipeHomeScreen()
+            with TabPane(TabIds.BUILD.name, id=TabIds.BUILD.id):
+                yield BuildHomeScreen()
+            with TabPane(TabIds.SEARCH.name, id=TabIds.SEARCH.id):
+                yield SearchHomeScreen()
             with TabPane(TabIds.SETTINGS.name, id=TabIds.SETTINGS.id):
                 yield SettingsScreen()
 

@@ -9,7 +9,7 @@ from textual.widgets import Button, Static, TabbedContent
 from widgets.base import ButtonIds, TabIds
 
 
-class IngredientsScreen(Static):
+class BuildHomeScreen(Static):
     def compose(self) -> None:
         yield Vertical(
             Button(

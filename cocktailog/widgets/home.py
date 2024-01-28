@@ -15,8 +15,8 @@ class HomeScreen(Static):
         yield Title("Welcome to Cocktailog!")
         yield Rule()
         yield Horizontal(
-            Button(ButtonIds.HOME_INGREDIENTS.name, id=ButtonIds.HOME_INGREDIENTS.id),
-            Button(ButtonIds.HOME_RECIPES.name, id=ButtonIds.HOME_RECIPES.id),
+            Button(ButtonIds.HOME_BUILD.name, id=ButtonIds.HOME_BUILD.id),
+            Button(ButtonIds.HOME_SEARCH.name, id=ButtonIds.HOME_SEARCH.id),
             Button(ButtonIds.HOME_SETTINGS.name, id=ButtonIds.HOME_SETTINGS.id),
         )
 
@@ -24,9 +24,9 @@ class HomeScreen(Static):
         button_id = event.button.id
         tabs = self.app.query_one(f"#{TabIds.TAB_MANAGER.id}", TabbedContent)
 
-        if button_id == ButtonIds.HOME_INGREDIENTS.id:
-           tabs.active = TabIds.INGREDIENTS.id
-        elif button_id == ButtonIds.HOME_RECIPES.id:
-            tabs.active = TabIds.RECIPES.id
+        if button_id == ButtonIds.HOME_BUILD.id:
+           tabs.active = TabIds.BUILD.id
+        elif button_id == ButtonIds.HOME_SEARCH.id:
+            tabs.active = TabIds.SEARCH.id
         elif button_id == ButtonIds.HOME_SETTINGS.id:
             tabs.active = TabIds.SETTINGS.id

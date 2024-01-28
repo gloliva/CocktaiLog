@@ -19,8 +19,8 @@ class TabIds:
     # Primary
     TAB_MANAGER = Id("Tab Manager", "primary_tab_manager")
     HOME = Id("Home", "primary_home_tab")
-    INGREDIENTS = Id("Ingredients", "primary_ingredients_tab")
-    RECIPES = Id("Recipes", "primary_recipes_tab")
+    BUILD = Id("Build", "primary_build_tab")
+    SEARCH = Id("Search", "primary_search_tab")
     SETTINGS = Id("Settings", "primary_settings_tab")
 
     # Recipe Ingredient Search tabs
@@ -44,14 +44,14 @@ class ButtonIds:
     BACK = Id("Go Back", "back_button")
 
     # Home page
-    HOME_INGREDIENTS = Id("Ingredients", "home_ingredients")
-    HOME_RECIPES = Id("Recipes", "home_recipes")
+    HOME_BUILD = Id("Build", "home_tab_build")
+    HOME_SEARCH = Id("Search", "home_tab_search")
     HOME_SETTINGS = Id("Settings", "home_settings")
 
-    # Ingredients page
+    # Build page
     INGREDIENTS_SEARCH = Id("Search Ingredient(s)", "ingredients_search")
     INGREDIENTS_MODIFY = Id("Add / Update Ingredient(s)", "ingredients_modify")
 
-    # Recipes page
+    # Search page
     RECIPE_SEARCH = Id("Search Recipe(s)", "recipes_search")
     RECIPE_MODIFY = Id("Add / Update Recipe(s)", "recipes_modify")

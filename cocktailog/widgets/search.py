@@ -164,7 +164,7 @@ class IngredientSearchScreen(Static):
         option_list.add_options(options)
 
 
-class RecipeHomeScreen(Static):
+class SearchHomeScreen(Static):
     RECIPE_SEARCH_ID = "recipe_tab_cocktail_search_input"
     RECIPE_LIST_ID = "recipe_tab_cocktail_option_list"
     RECIPE_HOME_BUTTON_ID = "recipe_tab_home_button"
