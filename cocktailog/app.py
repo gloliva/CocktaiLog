@@ -25,7 +25,7 @@ from ingredients import IngredientManager
 from widgets.base import TabIds
 from widgets.home import HomeScreen
 from widgets.build import BuildHomeScreen
-from widgets.search import SearchHomeScreen
+from widgets.search import SearchScreen
 from widgets.settings import SettingsScreen
 from recipe import RecipeManager
 
@@ -66,7 +66,7 @@ class Cocktailog(App[int]):
             with TabPane(TabIds.BUILD.name, id=TabIds.BUILD.id):
                 yield BuildHomeScreen()
             with TabPane(TabIds.SEARCH.name, id=TabIds.SEARCH.id):
-                yield SearchHomeScreen()
+                yield SearchScreen()
             with TabPane(TabIds.SETTINGS.name, id=TabIds.SETTINGS.id):
                 yield SettingsScreen()
 
