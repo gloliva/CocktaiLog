@@ -1,0 +1,36 @@
+SettingsScreen {
+    width: 70%;
+    height: 15w;
+    padding: 1 4;
+    border: thick gray;
+}
+
+/*
+    Rows
+*/
+.settings_tab_setting_row {
+    height: 3;
+    width: 100%;
+    align: left top;
+}
+
+.settings_tab_button_row {
+    height: 3;
+    width: 100%;
+    align: center middle;
+    margin: 1 0 0 0;
+}
+
+/*
+    Widgets
+*/
+SettingLabel {
+    height: 3;
+    content-align: left middle;
+    width: 12;
+}
+
+#settings_tab_theme_select_id {
+    width: 40%;
+    height: 3;
+}

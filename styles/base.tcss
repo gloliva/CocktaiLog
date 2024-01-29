@@ -1,0 +1,8 @@
+/*
+    Base Style file that applies to all containers and widgets
+*/
+Title {
+    content-align: center middle;
+    text-style: bold;
+    height: 1;
+}

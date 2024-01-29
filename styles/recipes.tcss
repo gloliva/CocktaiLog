@@ -36,6 +36,7 @@ OptionList {
 
 #recipe_tab_ingredient_search_input {
     width: 98%;
+    margin: 0 0 1 0;
 }
 
 #recipe_tab_home_button {
@@ -51,4 +52,22 @@ TabPane {
 
 VerticalScroll {
     align: center top;
+}
+
+Horizontal {
+    height: auto;
+    width: auto;
+    # margin: 1 1;
+}
+
+#search_tab_selected_ingredients_select_mode {
+    height: auto;
+    width: 30vw;
+    margin: 0;
+}
+
+#test_horizontal {
+    height: auto;
+    width: auto;
+    align: right top;
 }
