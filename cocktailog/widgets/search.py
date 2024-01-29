@@ -173,12 +173,12 @@ class IngredientSearchScreen(Static):
             Static("Search Mode:", classes=self.OPTIONS_LABEL),
             Select(
                 (
-                    ("Ingredient -> Recipe Match", IngredientSearchMode.INGREDIENTS_MATCH.value),
-                    ("Recipe -> Ingredient Match",  IngredientSearchMode.RECIPE_MATCH.value),
-                    ("Exact Match", IngredientSearchMode.EXACT_MATCH.value),
+                    ("Ingredient -> Recipe Match", IngredientSearchMode.INGREDIENTS_MATCH),
+                    ("Recipe -> Ingredient Match",  IngredientSearchMode.RECIPE_MATCH),
+                    ("Exact Match", IngredientSearchMode.EXACT_MATCH),
                 ),
                 allow_blank=False,
-                value=IngredientSearchMode.INGREDIENTS_MATCH.value,
+                value=IngredientSearchMode.INGREDIENTS_MATCH,
                 id=self.INGREDIENT_SEARCH_SELECT_MODE_ID,
             ),
             Static("Sort By:", classes=self.OPTIONS_LABEL),
@@ -213,6 +213,13 @@ class SearchScreen(Static):
     RECIPE_LIST_ID = "search_tab_cocktail_option_list"
     INGREDIENTS_SEARCH_COLLAPSIBLE_ID = "search_tab_ingredient_collapsible"
     RECIPE_HOME_BUTTON_ID = "search_tab_home_button"
+
+    # Search Screen Variables
+    search_mode = None
+
+    def on_mount(self) -> None:
+        select = self.query_one(f"#{IngredientSearchScreen.INGREDIENT_SEARCH_SELECT_MODE_ID}", Select)
+        self.search_mode = select.value
 
     def compose(self) -> ComposeResult:
         yield VerticalScroll(
@@ -260,7 +267,13 @@ class SearchScreen(Static):
             option_list.clear_options()
             option_list.add_options(options)
 
-    def on_selection_list_selected_changed(self, event: SelectionList.SelectedChanged):
+    def on_select_changed(self, event: Select.Changed):
+        select_id = event.select.id
+
+        if select_id == IngredientSearchScreen.INGREDIENT_SEARCH_SELECT_MODE_ID:
+            self.search_mode = event.select.value
+
+    def on_selection_list_selected_changed(self, _: SelectionList.SelectedChanged):
         # Update ingredients list
         option_list = self.app.query_one(f"#{self.RECIPE_LIST_ID}", OptionList)
 
@@ -279,7 +292,7 @@ class SearchScreen(Static):
             option_list.add_options(self.app.rm.get_all_recipe_names())
             return
 
-        recipes = self.app.rm.search_by_ingredients(ingredients_to_search, IngredientSearchMode.INGREDIENTS_MATCH)
+        recipes = self.app.rm.search_by_ingredients(ingredients_to_search, self.search_mode)
 
         if not recipes:
             options = [Option(f"No Recipe(s) Found", disabled=True)]
