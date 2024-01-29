@@ -10,27 +10,41 @@ from textual.widgets import Button, Select, Static, Switch, TabbedContent
 from widgets.base import ButtonIds, TabIds, Title
 
 
+class SettingLabel(Static):
+    pass
+
+
 class SettingsScreen(Static):
+    # CSS classes
+    SETTING_ROW_CLASS = "settings_tab_setting_row"
+    BUTTON_ROW_CLASS = "settings_tab_button_row"
+
+    # widget IDs
+    THEME_SELECT_ID = "settings_tab_theme_select_id"
+
     def compose(self) -> ComposeResult:
         yield Title("Settings")
         yield Horizontal(
-            Static("Dark Mode:", classes="label"),
+            SettingLabel("Dark Mode:"),
             Switch(value=True, id="dark_mode"),
-            classes="container",
+            classes=self.SETTING_ROW_CLASS,
         )
         yield Horizontal(
-            Static("Theme:", classes="label"),
+            SettingLabel("Theme:"),
             Select(
                 (("Default", "default"), ("Theme1", "theme1"), ("Theme2", "theme2")),
                 allow_blank=False,
                 value="default",
-                id="themes",
+                id=self.THEME_SELECT_ID,
             ),
-            classes="container",
+            classes=self.SETTING_ROW_CLASS,
         )
-        yield Button(
-            ButtonIds.HOME.name,
-            id=ButtonIds.HOME.id,
+        yield Horizontal(
+            Button(
+                ButtonIds.HOME.name,
+                id=ButtonIds.HOME.id,
+            ),
+            classes=self.BUTTON_ROW_CLASS,
         )
 
     def on_switch_changed(self, event: Switch.Changed) -> None:
