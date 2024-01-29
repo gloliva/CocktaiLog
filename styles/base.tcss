@@ -6,3 +6,9 @@ Title {
     text-style: bold;
     height: 1;
 }
+
+TabPane {
+    align: center middle;
+    width: 100%;
+    height: auto;
+}

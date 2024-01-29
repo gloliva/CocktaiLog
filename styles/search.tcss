@@ -1,73 +1,82 @@
-Collapsible {
-    width: 61%;
-    border: tall black;
-    margin: 1 0;
-    padding: 0 0;
-}
-
-OptionList {
-    height: auto;
-    width: 60%;
-    height: 10;
-    padding: 0 2;
-    border: tall black;
-    content-align: left middle;
+/*
+    Screen
+*/
+SearchScreen {
+    width: 70%;
+    border: thick gray;
+    padding: 1 4;
 }
 
 /*
-    RecipeHomeScreen Widgets
+    Primary widgets
 */
-#recipe_tab_cocktail_search_input {
+#search_tab_cocktail_search_input {
+    width: 100%;
     height: auto;
-    width: 60%;
+    margin: 0 0 1 0;
+}
+
+#search_tab_cocktail_option_list {
+    width: 100%;
+    height: 20%;
+    padding: 0 2;
+    border: tall black;
+}
+
+#search_tab_ingredient_collapsible {
+    width: 100%;
+    height: auto;
+    border: tall black;
     margin: 1 0;
+    padding: 0 1;
 }
 
-#recipe_tab_cocktail_option_list {
-    content-align: center middle;
-}
-
-#recipe_tab_selected_ingredient_option_list {
-    height: 10;
-    width: 98%;
-    align: left middle;
-    margin: 0 0 1 0;
-}
-
-#recipe_tab_ingredient_search_input {
-    width: 98%;
-    margin: 0 0 1 0;
-}
-
-#recipe_tab_home_button {
-    offset-x: 1;
-    width: 60.5%;
-    height: auto
-
-}
-
-TabPane {
+.search_tab_button_row {
+    height: 3;
+    width: 100%;
     align: center middle;
 }
 
-VerticalScroll {
-    align: center top;
+/*
+    IngredientSearchScreen widgets
+*/
+IngredientSearchScreen {
+    width: 100%;
+    height: auto;
 }
 
-Horizontal {
-    height: auto;
+#search_tab_selected_ingredient_option_list {
+    width: 100%;
+    height: 10;
+    border: tall black;
+    margin: 0 0 1 0;
+}
+
+#search_tab_ingredient_search_input {
+    width: 100%;
+    height: 3;
+    margin: 0 0 1 0;
+}
+
+#search_tab_ingredient_search_options_row {
+    height: 3;
+    width: 100%;
+    margin: 0 0 1 0;
+}
+
+.search_tab_options_label {
     width: auto;
-    # margin: 1 1;
+    height: 3;
+    content-align: left middle;
+    padding: 0 1;
 }
 
 #search_tab_selected_ingredients_select_mode {
     height: auto;
-    width: 30vw;
-    margin: 0;
+    width: 25%;
 }
 
-#test_horizontal {
-    height: auto;
-    width: auto;
-    align: right top;
+.search_tab_ingredient_search_selection_lists {
+    height: 20vh;
+    border: tall black;
 }

@@ -1,6 +1,6 @@
 SettingsScreen {
     width: 70%;
-    height: 15w;
+    height: auto;
     padding: 1 4;
     border: thick gray;
 }
