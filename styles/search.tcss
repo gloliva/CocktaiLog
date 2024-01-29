@@ -76,6 +76,9 @@ IngredientSearchScreen {
     width: 25%;
 }
 
+/*
+    IngredientSearchTabs widgets
+*/
 .search_tab_ingredient_search_selection_lists {
     height: 20vh;
     border: tall black;
