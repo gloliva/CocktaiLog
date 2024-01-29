@@ -123,7 +123,7 @@ class Recipe:
             return True
 
         # return True only if all ingredients_to_search are contained in the recipe items
-        elif search_mode == IngredientSearchMode.AT_LEAST_MATCH:
+        elif search_mode == IngredientSearchMode.INGREDIENTS_MATCH:
             for ingredient in ingredients_to_search:
                 equals = False
                 for item in self.items:
@@ -135,7 +135,7 @@ class Recipe:
             return True
 
         # return True only if all recipe items are found in ingredients_to_search
-        elif search_mode == IngredientSearchMode.AT_MOST_MATCH:
+        elif search_mode == IngredientSearchMode.RECIPE_MATCH:
             for item in self.items:
                 equals = False
                 for ingredient in ingredients_to_search:

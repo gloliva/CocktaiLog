@@ -9,6 +9,7 @@ from textual.widgets import (
     Collapsible,
     Input,
     OptionList,
+    Select,
     SelectionList,
     Static,
     TabbedContent,
@@ -134,6 +135,7 @@ class IngredientSearchTabs(Static):
 class IngredientSearchScreen(Static):
     INGREDIENT_SEARCH_INPUT_ID = "recipe_tab_ingredient_search_input"
     INGREDIENT_SEARCH_OPTION_LIST_ID = "recipe_tab_selected_ingredient_option_list"
+    INGREDIENT_SEARCH_SELECT_MODE_ID = "search_tab_selected_ingredients_select_mode"
 
     def compose(self) -> ComposeResult:
         yield OptionList(
@@ -143,6 +145,21 @@ class IngredientSearchScreen(Static):
         yield Input(
             placeholder="Search Ingredients",
             id=self.INGREDIENT_SEARCH_INPUT_ID,
+        )
+        yield Horizontal(
+            Static("Search Mode"),
+            Select(
+                (
+                    ("Ingredient -> Recipe Match", IngredientSearchMode.INGREDIENTS_MATCH.value),
+                    ("Recipe -> Ingredient Match",  IngredientSearchMode.RECIPE_MATCH.value),
+                    ("Exact Match", IngredientSearchMode.EXACT_MATCH.value),
+                ),
+                allow_blank=False,
+                value=IngredientSearchMode.INGREDIENTS_MATCH.value,
+                id=self.INGREDIENT_SEARCH_SELECT_MODE_ID,
+            ),
+            Static("Sort By"),
+            id="test_horizontal"
         )
         yield IngredientSearchTabs()
 
@@ -230,7 +247,7 @@ class SearchHomeScreen(Static):
             option_list.add_options(self.app.rm.get_all_recipe_names())
             return
 
-        recipes = self.app.rm.search_by_ingredients(ingredients_to_search, IngredientSearchMode.AT_LEAST_MATCH)
+        recipes = self.app.rm.search_by_ingredients(ingredients_to_search, IngredientSearchMode.INGREDIENTS_MATCH)
 
         if not recipes:
             options = [Option(f"No Recipe(s) Found", disabled=True)]
