@@ -2,7 +2,7 @@
     Screen
 */
 SearchScreen {
-    width: 70%;
+    width: 90%;
     border: thick gray;
     padding: 1 4;
 }

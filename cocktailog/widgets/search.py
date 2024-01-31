@@ -273,6 +273,10 @@ class SearchScreen(Static):
         if select_id == IngredientSearchScreen.INGREDIENT_SEARCH_SELECT_MODE_ID:
             self.search_mode = event.select.value
 
+            # update ingredients list
+            selection_list = self.query_one(f"#{IngredientSearchTabs.SELECTION_IDS[0]}", SelectionList)
+            self.post_message(SelectionList.SelectedChanged(selection_list=selection_list))
+
     def on_selection_list_selected_changed(self, _: SelectionList.SelectedChanged):
         # Update ingredients list
         option_list = self.app.query_one(f"#{self.RECIPE_LIST_ID}", OptionList)
